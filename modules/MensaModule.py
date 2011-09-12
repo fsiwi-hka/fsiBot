@@ -24,7 +24,7 @@ def toInt(s):
 	try:
 		f = int(s)
 	except:
-		do = 'nothing?'
+		pass
 	return f
 	
 #TODO: Need a Regex here?
