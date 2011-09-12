@@ -117,7 +117,7 @@ class MensaModule(BotModule):
 								line = line + " - "
 							line = line + currentMeal
 					if send:
-						self.sendPublicMessage(line)
+						self.sendPrivateMessage(nick, line)
 						empty = False
 				if empty:
 					self.sendPrivateMessage(nick, "Keine Gerichte gefunden.")
@@ -126,5 +126,5 @@ class MensaModule(BotModule):
 				
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!mensa [offset] - Mensaplan der laufenden Woche. offset = [0-9] oder 'heute'/'morgen', default 'heute'")
+		self.sendPrivateMessage(nick, "!mensa [offset] - Mensaplan der laufenden Woche. offset = [0-5] oder 'heute'/'morgen', default 'heute'")
 		return
