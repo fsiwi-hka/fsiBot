@@ -1,0 +1,11 @@
+*.pyc
+
+
+.ssh/*
+.bash_history
+.bashrc
+.vimrc
+.viminfo
+bestof
+deimudda
+users.log
