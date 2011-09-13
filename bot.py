@@ -37,5 +37,8 @@ bot.addModule(PastebinModule())
 from BeerModule import BeerModule
 bot.addModule(BeerModule())
 
+from RRouletteModule import RRouletteModule
+bot.addModule(RRouletteModule())
+
 # Start :)
 bot.start()
