@@ -26,9 +26,8 @@ class RRouletteModule(BotModule):
         #let em shoot
         if cmd == '!roulette' and type != 'private':
             if self.revolver.pop() == 'bullet':
-                line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann...'
+                line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann... Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.'
                 self.revolver = self.reload()
-                self.sendPublicMessage('Neues Glück: Trommel aus ' + self.size + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.')
             else:
                 line = '*click* - ' + nick + ' ist ein Glückspilz. Nächster?'
             self.sendPublicMessage(line)
