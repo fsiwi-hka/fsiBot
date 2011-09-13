@@ -18,14 +18,16 @@ class BeerModule(BotModule):
 				line = "Kein Bier vor 4!"
 				self.sendPublicMessage(line)
 			else:
+				schmack = random.choice(["leckeres", "wohltuendes", "wohlschmeckendes", "eisgekühltes", "lauwarmes", "abgestandenes", "schales"])
+				beer = random.choice(["Tannenzäpfle", "Höpfner", "Leikeim", "Becks", "Jever", "Öttinger", "Palmbräu", "Andechser Doppelbock", "Kölsch", "Veltins"])
 				if len(args) > 0:
-					line = "gibt " + args[0] + " ein leckeres Tannenzäpfle."
+					line = "gibt " + args[0] + " ein " + schmack + " " + beer + "."
 					self.sendPublicAction(line)
 					line = "Geht auf " + nick + "!"
 					self.sendPublicMessage(line)
 					return
 				else:
-					line = "gibt " + nick + " ein leckeres Tannenzäpfle."
+					line = "gibt " + nick + " ein " + schmack + " " + beer + "."
 					self.sendPublicAction(line)
 
 	def help(self, nick):
