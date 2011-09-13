@@ -20,15 +20,11 @@ class BeerModule(BotModule):
 			else:
 				schmack = random.choice(["leckeres", "wohltuendes", "wohlschmeckendes", "eisgekühltes", "lauwarmes", "abgestandenes", "schales"])
 				beer = random.choice(["Tannenzäpfle", "Höpfner", "Leikeim", "Becks", "Jever", "Öttinger", "Palmbräu", "Andechser Doppelbock", "Kölsch", "Veltins"])
+
+				line = "gibt " + args[0] + " ein " + schmack + " " + beer + "."
 				if len(args) > 0:
-					line = "gibt " + args[0] + " ein " + schmack + " " + beer + "."
-					self.sendPublicAction(line)
-					line = "Geht auf " + nick + "!"
-					self.sendPublicMessage(line)
-					return
-				else:
-					line = "gibt " + nick + " ein " + schmack + " " + beer + "."
-					self.sendPublicAction(line)
+					line = line + " Mit freundlichen Grüßen von " + nick
+				self.sendPublicAction(line)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!beer - Verteilt Bier.")
