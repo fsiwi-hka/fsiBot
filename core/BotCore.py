@@ -4,6 +4,7 @@
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
+from RollbackImporter import RollbackImporter
 import os, sys, random, time
 
 class FSIBot(SingleServerIRCBot):
@@ -23,6 +24,10 @@ class FSIBot(SingleServerIRCBot):
 
 		# Initialize module lists
 		self.modules = []
+		self.modulestrings = []
+
+		# Initialize RollbackImporter
+		self.rollback = RollbackImporter()
 		
 
 	def on_nicknameinuse(self, c, e):
@@ -64,8 +69,23 @@ class FSIBot(SingleServerIRCBot):
 
 	# Adds a module to the module list
 	def addModule(self, module):
-		module.setup(self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.DEBUG)
-		self.modules.append(module)
+		self.modulestrings.append(module)
+		self.loadModule(module)
+
+	# Imports the module file and adds an instance to self.modules
+	def loadModule(self, module):
+		mod = __import__(module)
+		modobj = eval("mod." + module + "()")
+		modobj.setup(self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.DEBUG)
+		self.modules.append(modobj)
+
+    # Reload all modules
+	def reload(self):
+		self.rollback.uninstall()
+		self.rollback = RollbackImporter()
+		self.modules = []
+		for module in self.modulestrings:	
+			self.loadModule(module)
 
 	# type: 'public', 'private'
 	def parseMessage(self, c, e, type):
@@ -84,6 +104,19 @@ class FSIBot(SingleServerIRCBot):
 		if self.DEBUG:
 			print "Parsing " + str(type) + " command '" + str(cmd) + "' with '" + str(args) + "' from '" + str(nick) + "'"
 
+		# A few hardcoded commands that don't really need to be a module right now
+		if cmd == "!reload":
+			# This is weird. Bot is only present in one channel, this WILL (probably) break if he is in multiple.
+			for chname, chobj in self.channels.items():
+				if not chobj.is_oper(nick):
+					self.sendPrivateMessage(nick, "Not allowed.")
+					return
+
+			self.sendPrivateMessage(nick, "Reloading " + str(len(self.modulestrings)) + " modules...")
+			self.reload()
+			self.sendPrivateMessage(nick, "done.")
+			return
+
 		# User requested help. Send introduction string, then all help strings from all modules
 		# Also, hardcoded strings.
 		if cmd == "!help":
@@ -91,11 +124,6 @@ class FSIBot(SingleServerIRCBot):
 			self.sendPrivateMessage(nick, "!kontakt - Zeigt dir Kontaktinformationen zur Fachschaft an.")	
 			for module in self.modules:
 				module.help(nick)
-			return
-
-		# A few hardcoded commands that don't really need to be a module right now
-		if cmd == "!kontakt":
-			self.sendPrivateMessage(nick, "E-Mail: kontakt@hska.info :: Tel: 0721 925-1448")
 			return
 		
 		# every string that starts with an '!' is considered to be an command
