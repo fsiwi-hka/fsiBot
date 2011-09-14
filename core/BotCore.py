@@ -88,8 +88,7 @@ class FSIBot(SingleServerIRCBot):
 		# Also, hardcoded strings.
 		if cmd == "!help":
 			self.sendPrivateMessage(nick, "Hallo " + nick + ", ich bin der Bot der Fachschaft Informatik. Hier sind meine Befehle:")
-			self.sendPrivateMessage(nick, "!kontakt - Zeigt dir Kontaktinformationen zur Fachschaft an.")
-			#self.sendPrivateMessage(nick, "!p/!paste - Schreibt die Adresse zu unserem Pastebin in den Channel.")	
+			self.sendPrivateMessage(nick, "!kontakt - Zeigt dir Kontaktinformationen zur Fachschaft an.")	
 			for module in self.modules:
 				module.help(nick)
 			return
@@ -98,9 +97,6 @@ class FSIBot(SingleServerIRCBot):
 		if cmd == "!kontakt":
 			self.sendPrivateMessage(nick, "E-Mail: kontakt@hska.info :: Tel: 0721 925-1448")
 			return
-
-		#if cmd == "!p" or cmd == "!paste":
-		#	self.sendPublicMessage(self.channel, "Benutze http://paste.hska.info zum pasten von Snippets. So sind sie nur für eingeloggte Studenten sichtbar.")
 		
 		# every string that starts with an '!' is considered to be an command
 		if cmd.startswith("!"):
