@@ -12,7 +12,7 @@ _DEBUG = False
 
 from BotCore import FSIBot
 
-bot = FSIBot("##fsi-test", "fsiBot2", "irc.freenode.org", 6667, _DEBUG)
+bot = FSIBot("##fsi", "fsiBot", "irc.freenode.org", 6667, _DEBUG)
 
 # Add all activated modules to the bot
 
