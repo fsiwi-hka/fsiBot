@@ -14,31 +14,21 @@ from BotCore import FSIBot
 
 bot = FSIBot("##fsi", "fsiBot", "irc.freenode.org", 6667, _DEBUG)
 
-#from BotModule import HelloWorldExample
-#bot.addModule(HelloWorldExample())
-
 # Add all activated modules to the bot
 
-from BestOfModule import BestOfModule
-bot.addModule(BestOfModule())
+bot.addModule("BestOfModule")
 
-from FortuneModule import FortuneModule
-bot.addModule(FortuneModule())
+bot.addModule("FortuneModule")
 
-from MensaModule import MensaModule
-bot.addModule(MensaModule())
+bot.addModule("MensaModule")
 
-from DeiMuddaModule import DeiMuddaModule
-bot.addModule(DeiMuddaModule())
+bot.addModule("DeiMuddaModule")
 
-from PastebinModule import PastebinModule
-bot.addModule(PastebinModule())
+bot.addModule("PastebinModule")
 
-from BeerModule import BeerModule
-bot.addModule(BeerModule())
+bot.addModule("BeerModule")
 
-from RRouletteModule import RRouletteModule
-bot.addModule(RRouletteModule())
+bot.addModule("RRouletteModule")
 
 # Start :)
 bot.start()
