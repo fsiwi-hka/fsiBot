@@ -116,6 +116,11 @@ class FSIBot(SingleServerIRCBot):
 			self.reload()
 			self.sendPrivateMessage(nick, "done.")
 			return
+		
+		# A few hardcoded commands that don't really need to be a module right now
+		if cmd == "!kontakt":
+			self.sendPrivateMessage(nick, "E-Mail: kontakt@hska.info :: Tel: 0721 925-1448")
+			return
 
 		# User requested help. Send introduction string, then all help strings from all modules
 		# Also, hardcoded strings.
