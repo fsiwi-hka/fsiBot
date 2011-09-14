@@ -4,7 +4,7 @@
 from BotModule import BotModule
 from PastebinModuleConfig import PastebinModuleConfig
 
-import os, sys, random, commands, MySQLdb
+import os, sys, random, commands
 
 class PastebinModule(BotModule):
 	def __init__(self):
