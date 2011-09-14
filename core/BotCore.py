@@ -4,8 +4,7 @@
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
-from RollbackImporter import RollbackImporter
-import os, sys, random, time, MySQLdb
+import os, sys, random, time
 
 class FSIBot(SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667, debug=False):
@@ -24,11 +23,9 @@ class FSIBot(SingleServerIRCBot):
 
 		# Initialize module lists
 		self.modules = []
-		self.modulestrings = []
 
-		# Initialize RollbackImporter
-		self.rollback = RollbackImporter()
-		
+		# TODO: rename...
+		self.moduleslist = []
 
 	def on_nicknameinuse(self, c, e):
 		#c.nick(c.get_nickname() + "_")
@@ -69,23 +66,23 @@ class FSIBot(SingleServerIRCBot):
 
 	# Adds a module to the module list
 	def addModule(self, module):
-		self.modulestrings.append(module)
 		self.loadModule(module)
 
 	# Imports the module file and adds an instance to self.modules
-	def loadModule(self, module):
+	def loadModule(self, module, reload=False):
 		mod = __import__(module)
-		modobj = eval("mod." + module + "()")
+		modobj = getattr(mod, module)() #eval("mod." + module + "()")
 		modobj.setup(self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.DEBUG)
 		self.modules.append(modobj)
+		if not reload:
+			self.moduleslist.append([module, mod])
 
     # Reload all modules
 	def reload(self):
-		self.rollback.uninstall()
-		self.rollback = RollbackImporter()
 		self.modules = []
-		for module in self.modulestrings:	
-			self.loadModule(module)
+		for modstr, mod in self.moduleslist:
+			mod = reload(mod)
+			self.loadModule(modstr, True)
 
 	# type: 'public', 'private'
 	def parseMessage(self, c, e, type):
@@ -112,7 +109,7 @@ class FSIBot(SingleServerIRCBot):
 					self.sendPrivateMessage(nick, "Not allowed.")
 					return
 
-			self.sendPrivateMessage(nick, "Reloading " + str(len(self.modulestrings)) + " modules...")
+			self.sendPrivateMessage(nick, "Reloading " + str(len(self.modules)) + " modules...")
 			self.reload()
 			self.sendPrivateMessage(nick, "done.")
 			return
