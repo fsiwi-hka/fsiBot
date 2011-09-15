@@ -4,7 +4,7 @@
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
-import os, sys, random, time
+import os, sys, pyclbr, random, time, itertools
 
 class FSIBot(SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667, debug=False):
@@ -21,11 +21,8 @@ class FSIBot(SingleServerIRCBot):
 		self.connection.add_global_handler("pubmsg", getattr(self, "publicMessage"), 42)
 		self.connection.add_global_handler("privmsg", getattr(self, "privateMessage"), 42)
 
-		# Initialize module lists
-		self.modules = []
-
-		# TODO: rename...
-		self.moduleslist = []
+		# List of active modules
+		self.activeModules = []
 
 	def on_nicknameinuse(self, c, e):
 		#c.nick(c.get_nickname() + "_")
@@ -49,7 +46,7 @@ class FSIBot(SingleServerIRCBot):
 	#todo: same as above
 	def privateMessage(self, c, e):
 		self.parseMessage(c, e, 'private')
-
+	
 	# Sends a private message ("query") to nick
 	def sendPrivateMessage(self, nick, message):
 		self.connection.privmsg(nick, message)
@@ -69,20 +66,45 @@ class FSIBot(SingleServerIRCBot):
 		self.loadModule(module)
 
 	# Imports the module file and adds an instance to self.modules
-	def loadModule(self, module, reload=False):
+	def loadModule(self, module):
 		mod = __import__(module)
 		modobj = getattr(mod, module)() #eval("mod." + module + "()")
 		modobj.setup(self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.DEBUG)
-		self.modules.append(modobj)
-		if not reload:
-			self.moduleslist.append([module, mod])
+		self.activeModules.append(modobj)
 
     # Reload all modules
 	def reload(self):
-		self.modules = []
-		for modstr, mod in self.moduleslist:
-			mod = reload(mod)
-			self.loadModule(modstr, True)
+		modules = list(self.activeModules)
+		self.activeModules = []
+		for mod in modules:
+			modtype = __import__(type(mod).__name__)
+			modtype = reload(modtype)
+			self.loadModule(type(mod).__name__)
+
+	# Restarts the bot
+	def restart(self):
+		# TODO
+		return
+
+	# Checks modules/ for available modules (every class that is derrived from BotModule)
+	def getAvailableModules(self):
+		availableModules = []
+		for file in os.listdir(os.path.dirname("modules/")):
+			if file.endswith(".py"):
+				cl = pyclbr.readmodule(file[:-3])
+				for k, v in cl.items():
+					name = v.name
+					base = v.super
+					if "BotModule" in base:
+						availableModules.append(name)
+		return availableModules
+
+	def isOper(self, nick):
+		# This is weird. Bot is only present in one channel, this WILL (probably) break if he is in multiple.
+		for chname, chobj in self.channels.items():
+			if not chobj.is_oper(nick):
+				return False
+		return True
 
 	# type: 'public', 'private'
 	def parseMessage(self, c, e, type):
@@ -101,20 +123,79 @@ class FSIBot(SingleServerIRCBot):
 		if self.DEBUG:
 			print "Parsing " + str(type) + " command '" + str(cmd) + "' with '" + str(args) + "' from '" + str(nick) + "'"
 
-		# A few hardcoded commands that don't really need to be a module right now
-		if cmd == "!reload":
-			# This is weird. Bot is only present in one channel, this WILL (probably) break if he is in multiple.
-			for chname, chobj in self.channels.items():
-				if not chobj.is_oper(nick):
-					self.sendPrivateMessage(nick, "Not allowed.")
+		# Hardcoded oper commands
+		if self.isOper(nick):
+			if cmd == "!mod":
+				if len(args) < 1:
+					self.sendPrivateMessage(nick, "Usage: !mod option [module]")
+					self.sendPrivateMessage(nick, "option: list, add, rm")
 					return
 
-			self.sendPrivateMessage(nick, "Reloading " + str(len(self.modules)) + " modules...")
-			self.reload()
-			self.sendPrivateMessage(nick, "done.")
-			return
+				if args[0].lower() == "list":
+					self.sendPrivateMessage(nick, "List of modules:")
+					active = []
+					for mod in self.activeModules:
+						active.append(mod.__class__.__name__)
+					
+					available = self.getAvailableModules()
+					for mod in available:
+						status = "[ ]"
+						if mod in active:
+							status = "[*]"
+						self.sendPrivateMessage(nick, status + " " + mod)
+					return
+
+				if args[0].lower() == "add":
+					if len(args) < 2:
+						self.sendPrivateMessage(nick, "Usage: !mod add module")
+						return
+
+					addmod = ""
+					available = self.getAvailableModules()
+					for mod in available:
+						if mod.lower() == args[1].lower() or mod.lower() == args[1].lower() + "module":
+							addmod = mod
+
+					if addmod is "":
+						self.sendPrivateMessage(nick, "No module added.")
+
+					try:
+						self.addModule(addmod)
+						self.sendPrivateMessage(nick, "Module '" + addmod + "' added.")
+					except:
+						self.sendPrivateMessage(nick, "Exception returned.")
+					return
+
+				if args[0].lower() == "rm" or args[0].lower() == "remove":
+					if len(args) < 2:
+						self.sendPrivateMessage(nick, "Usage: !mod rm module")
+						return
+
+					index = -1
+					rmmod = args[1].lower()
+					for i, mod in enumerate(self.activeModules):
+						modname = mod.__class__.__name__
+						if modname.lower() == rmmod or modname.lower() == rmmod + "module":
+							index = i
+							rmmod = modname
+
+					if index != -1:
+						del self.activeModules[index]
+						self.sendPrivateMessage(nick, "Module '" + rmmod + "' removed.")
+					else:		
+						self.sendPrivateMessage(nick, "No module removed.")	
+					return
+
+				self.sendPublicMessage(str(args))
+				return
+
+			if cmd == "!reload":
+				self.sendPrivateMessage(nick, "Reloading " + str(len(self.activeModules)) + " modules...")
+				self.reload()
+				self.sendPrivateMessage(nick, "done.")
+				return
 		
-		# A few hardcoded commands that don't really need to be a module right now
+		# Contact information for fsi
 		if cmd == "!kontakt":
 			self.sendPrivateMessage(nick, "E-Mail: kontakt@hska.info :: Tel: 0721 925-1448")
 			return
@@ -124,13 +205,13 @@ class FSIBot(SingleServerIRCBot):
 		if cmd == "!help":
 			self.sendPrivateMessage(nick, "Hallo " + nick + ", ich bin der Bot der Fachschaft Informatik. Hier sind meine Befehle:")
 			self.sendPrivateMessage(nick, "!kontakt - Zeigt dir Kontaktinformationen zur Fachschaft an.")	
-			for module in self.modules:
+			for module in self.activeModules:
 				module.help(nick)
 			return
 		
 		# every string that starts with an '!' is considered to be an command
 		if cmd.startswith("!"):
-			for module in self.modules:
+			for module in self.activeModules:
 				module.command(nick, cmd, args, type)
 
 	# Dumps the number of chat users to a logfile
