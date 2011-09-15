@@ -236,6 +236,12 @@ class FSIBot(SingleServerIRCBot):
 			self.sendPrivateMessage(nick, "!kontakt - Zeigt dir Kontaktinformationen zur Fachschaft an.")	
 			for module in self.activeModules:
 				module.help(nick)
+
+			if self.isOper(nick):
+				self.sendPrivateMessage(nick, "Befehle für Ops:")
+				self.sendPrivateMessage(nick, "!reload - Lädt alle aktiven Module neu")
+				self.sendPrivateMessage(nick, "!restart - Startet den Bot neu (nützlich nach einem Upgrade)")
+				self.sendPrivateMessage(nick, "!mod - Modulverwaltung")
 			return
 		
 		# every string that starts with an '!' is considered to be an command
