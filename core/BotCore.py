@@ -209,7 +209,6 @@ class FSIBot(SingleServerIRCBot):
 						self.sendPrivateMessage(nick, "No module removed.")	
 					return
 
-				self.sendPublicMessage(str(args))
 				return
 
 			if cmd == "!reload":
