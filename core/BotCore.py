@@ -4,14 +4,19 @@
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
-import os, sys, pyclbr, random, time, itertools
+import os, sys, pyclbr, random, time, datetime, itertools
+
+def timestamp():
+	now = datetime.datetime.now()
+	return now.strftime("%Y-%m-%d %H:%M:%S")
 
 class FSIBot(SingleServerIRCBot):
 	def __init__(self, channel, nickname, server, port=6667, debug=False):
+		self.log("Bot initialized.")
 		self.DEBUG = debug
 		SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
 		self.channel = channel
-
+		self.nickpassword = ""
 		self.connection.add_global_handler("join", getattr(self, "inform_webusers"), 42)
 
 		for i in ["kick", "join", "quit", "part", "topic", "endofnames", "notopic"]:
@@ -23,21 +28,35 @@ class FSIBot(SingleServerIRCBot):
 
 		# List of active modules
 		self.activeModules = []
+	
+	def log(self, string):
+		print timestamp() + ": " + string
+		return
+
+	def start(self):
+		self.log("Connecting to " + self.server_list[0][0] + ":" + str(self.server_list[0][1]))
+		SingleServerIRCBot.start(self)	
 
 	def on_nicknameinuse(self, c, e):
-		#c.nick(c.get_nickname() + "_")
-		#sendPrivateMessage("nickserv", "ghost fsibot FOO")
-		#time.sleep(3)
-		#c.nick(c.get_nickname())
-		c.nick(c.get_nickname() + "_")
+		if self.nickpassword != "":
+			c.nick(c.get_nickname() + "_")
+			time.sleep(1)
+			sendPrivateMessage("nickserv", "ghost fsibot " + self.nickpassword)
+			time.sleep(2)
+			c.nick(c.get_nickname())
+		else:
+			c.nick(c.get_nickname() + "_")
 
 	def on_welcome(self, c, e):
-		#self.sendPrivateMessage("nickserv", "identify FOO")
+		self.log("Joining channel " + self.channel)
+		if self.nickpassword != "":
+			self.sendPrivateMessage("nickserv", "identify FOO")
+			time.sleep(1)
 		c.join(self.channel)
 
 	def on_all_raw_messages(self, c, e):
 		if self.DEBUG:
-			print str(e.eventtype()) + " " + str(e.source()) + " " + str(e.target()) + " " + str(e.arguments())
+			self.log(str(e.eventtype()) + " " + str(e.source()) + " " + str(e.target()) + " " + str(e.arguments()))
 
 	#todo: Maybe we dont need these functions, look into the handler
 	def publicMessage(self, c, e):
@@ -83,7 +102,9 @@ class FSIBot(SingleServerIRCBot):
 
 	# Restarts the bot
 	def restart(self):
-		# TODO
+		self.connection.disconnect("Restarting...")
+		os.execl(sys.executable, sys.executable, *sys.argv)
+		sys.exit(0)
 		return
 
 	# Checks modules/ for available modules (every class that is derrived from BotModule)
@@ -121,7 +142,7 @@ class FSIBot(SingleServerIRCBot):
 		args.pop(0)
 
 		if self.DEBUG:
-			print "Parsing " + str(type) + " command '" + str(cmd) + "' with '" + str(args) + "' from '" + str(nick) + "'"
+			self.log("Parsing " + str(type) + " command '" + str(cmd) + "' with '" + str(args) + "' from '" + str(nick) + "'")
 
 		# Hardcoded oper commands
 		if self.isOper(nick):
@@ -162,6 +183,7 @@ class FSIBot(SingleServerIRCBot):
 					try:
 						self.addModule(addmod)
 						self.sendPrivateMessage(nick, "Module '" + addmod + "' added.")
+						self.log(nick + " added module '" + addmod + "'")
 					except:
 						self.sendPrivateMessage(nick, "Exception returned.")
 					return
@@ -182,6 +204,7 @@ class FSIBot(SingleServerIRCBot):
 					if index != -1:
 						del self.activeModules[index]
 						self.sendPrivateMessage(nick, "Module '" + rmmod + "' removed.")
+						self.log(nick + " removed module '" + rmmod + "'")
 					else:		
 						self.sendPrivateMessage(nick, "No module removed.")	
 					return
@@ -190,9 +213,15 @@ class FSIBot(SingleServerIRCBot):
 				return
 
 			if cmd == "!reload":
+				self.log(nick + " triggered reload.")
 				self.sendPrivateMessage(nick, "Reloading " + str(len(self.activeModules)) + " modules...")
 				self.reload()
 				self.sendPrivateMessage(nick, "done.")
+				return
+
+			if cmd == "!restart":
+				self.log(nick + " triggered restart.")
+				self.restart()
 				return
 		
 		# Contact information for fsi
@@ -225,7 +254,7 @@ class FSIBot(SingleServerIRCBot):
 		userfile = open(os.path.abspath(os.path.dirname(sys.argv[0])) + "/users.log", "w")
 		userfile.write(str(users))
 		userfile.close()
-		print "Updated userfile to " + str(users) + " users"
+		self.log("Logged " + str(users) + " users")
 
 	# Sends information string to webchat users coming from our site
 	def inform_webusers(self, c, e):
