@@ -12,8 +12,8 @@ class BeerModule(BotModule):
 		return
 
 	def command(self, nick, cmd, args, type):
-		lt = localtime();
-		if cmd == "!beer" and type != "private":
+		lt = localtime()	
+		if cmd == "!beer":
 			if lt[3] > 6 and lt[3] < 16:
 				line = "Kein Bier vor 4!"
 				self.sendPublicMessage(line)
