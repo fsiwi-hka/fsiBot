@@ -179,6 +179,7 @@ class FSIBot(SingleServerIRCBot):
 
 					if addmod is "":
 						self.sendPrivateMessage(nick, "No module added.")
+						return
 
 					try:
 						self.addModule(addmod)
