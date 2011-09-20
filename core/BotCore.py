@@ -11,12 +11,13 @@ def timestamp():
 	return now.strftime("%Y-%m-%d %H:%M:%S")
 
 class FSIBot(SingleServerIRCBot):
-	def __init__(self, channel, nickname, server, port=6667, debug=False):
+	def __init__(self, channel, nickname, password, server, port=6667, debug=False):
 		self.log("Bot initialized.")
 		self.DEBUG = debug
 		SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
 		self.channel = channel
-		self.nickpassword = ""
+		self.nick = nickname
+		self.nickpassword = password
 		self.connection.add_global_handler("join", getattr(self, "inform_webusers"), 42)
 
 		for i in ["kick", "join", "quit", "part", "topic", "endofnames", "notopic"]:
@@ -25,6 +26,8 @@ class FSIBot(SingleServerIRCBot):
 		# We need to distinguish between private and public messages
 		self.connection.add_global_handler("pubmsg", getattr(self, "publicMessage"), 42)
 		self.connection.add_global_handler("privmsg", getattr(self, "privateMessage"), 42)
+		self.connection.add_global_handler("privnotice", getattr(self, "privateMessage"), 42)
+		self.connection.add_global_handler("notice", getattr(self, "privateMessage"), 42)
 
 		# List of active modules
 		self.activeModules = []
@@ -45,23 +48,33 @@ class FSIBot(SingleServerIRCBot):
 	def on_nicknameinuse(self, c, e):
 		if self.nickpassword != "":
 			c.nick(c.get_nickname() + "_")
-			time.sleep(1)
-			sendPrivateMessage("nickserv", "ghost fsibot " + self.nickpassword)
 			time.sleep(2)
-			c.nick(c.get_nickname())
+			sendPrivateMessage("nickserv", "ghost " + self.nick + " " + self.nickpassword)
+			time.sleep(2)
+			c.nick(self.nick)
+			time.sleep(2)
+			self.identify()
 		else:
 			c.nick(c.get_nickname() + "_")
 
 	def on_welcome(self, c, e):
-		self.log("Joining channel " + self.channel)
 		if self.nickpassword != "":
-			self.sendPrivateMessage("nickserv", "identify FOO")
-			time.sleep(1)
+			self.identify()
+
+		self.log("Joining channel " + self.channel)
 		c.join(self.channel)
 
 	def on_all_raw_messages(self, c, e):
 		if self.DEBUG:
 			self.log(str(e.eventtype()) + " " + str(e.source()) + " " + str(e.target()) + " " + str(e.arguments()))
+	
+	def identify(self):
+		if self.nickpassword == "":
+			return
+		time.sleep(1)
+		self.log("Identifing myself")
+		self.sendPrivateMessage("nickserv", "identify " + self.nickpassword)
+		time.sleep(1)
 
 	#todo: Maybe we dont need these functions, look into the handler
 	def publicMessage(self, c, e):
@@ -135,6 +148,11 @@ class FSIBot(SingleServerIRCBot):
 	# type: 'public', 'private'
 	def parseMessage(self, c, e, type):
 		nick = nm_to_n(e.source())
+
+		if nick.lower() == "nickserv" and type == "private":
+			if "This nickname is registered." in e.arguments()[0]:
+				self.identify()
+			return
 		
 		# Splitting the string into command and arguments
 		args = e.arguments()[0].split()
