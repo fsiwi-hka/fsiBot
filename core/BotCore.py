@@ -35,7 +35,12 @@ class FSIBot(SingleServerIRCBot):
 
 	def start(self):
 		self.log("Connecting to " + self.server_list[0][0] + ":" + str(self.server_list[0][1]))
-		SingleServerIRCBot.start(self)	
+		try:
+			SingleServerIRCBot.start(self)	
+		except KeyboardInterrupt:
+			self.log("^C caught")
+			self.connection.disconnect("^C caught")
+			sys.exit(0)
 
 	def on_nicknameinuse(self, c, e):
 		if self.nickpassword != "":
@@ -260,7 +265,7 @@ class FSIBot(SingleServerIRCBot):
 		userfile = open(os.path.abspath(os.path.dirname(sys.argv[0])) + "/users.log", "w")
 		userfile.write(str(users))
 		userfile.close()
-		self.log("Logged " + str(users) + " users")
+		#self.log("Logged " + str(users) + " users")
 
 	# Sends information string to webchat users coming from our site
 	def inform_webusers(self, c, e):
