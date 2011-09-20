@@ -10,12 +10,13 @@ from BeautifulSoup import BeautifulSoup
 
 import os, sys, re, time
 
+# This seems like somebody did not know what they were doing...
 def toFloat(s):
 	f = 0.0
 	try:
 		f = float(s)
 	except:
-		do = 'nothing?'
+		pass
 	return f
 	
 
