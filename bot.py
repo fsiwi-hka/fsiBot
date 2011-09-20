@@ -4,26 +4,23 @@
 # Add module and core folders to syspath
 # TODO: Is this the right way to do this?
 # see http://stackoverflow.com/questions/279237/python-import-a-module-from-a-folder
-import sys, os
+import sys, os, config
+sys.path.insert(0, "thirdparty/")
 sys.path.insert(0, "core/")
 sys.path.insert(0, "modules/")
 sys.path.insert(0, "modules/config/")
 
-_DEBUG = False 
-
 from BotCore import FSIBot
 
-bot = FSIBot("##fsi", "fsiBot", "irc.freenode.org", 6667, _DEBUG)
+# Open config file
+cfg = config.Config(file("bot.config"))
+botcfg = cfg.bot
+
+bot = FSIBot(botcfg.channel, botcfg.name, botcfg.server, botcfg.port, botcfg.debug)
 
 # Add activated modules to the bot
-
-bot.addModule("BestOfModule")
-bot.addModule("FortuneModule")
-bot.addModule("MensaModule")
-bot.addModule("DeiMuddaModule")
-bot.addModule("PastebinModule")
-bot.addModule("BeerModule")
-bot.addModule("RRouletteModule")
+for mod in botcfg.modules:
+    bot.addModule(mod)
 
 # Start :)
 bot.start()
