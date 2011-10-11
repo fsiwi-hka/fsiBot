@@ -81,6 +81,32 @@ class MensaModule(BotModule):
 		self.lastFetch = time.time()
 		return mensa
 
+	def buildMensaplan(self, dayOffset):
+		mensaplan = []
+		#empty = True
+		meals = self.getMeals()
+		for i in range(len(meals[dayOffset][0])):
+			send = False
+			line = "[" + meals[dayOffset][0][i] + "]" + ""
+			for f in range(len(meals[dayOffset][1][i])):
+				price = 0.0
+				currentMeal = meals[dayOffset][1][i][f]
+				r = re.compile("(\d+,\d\d) E")
+				prices = r.findall(currentMeal)
+				if(len(prices) == 1):
+					price = toFloat(prices[0].replace(",","."))
+				if price > 1.0:
+					send = True
+					if f != 0:
+						line = line + " - "
+					line = line + currentMeal
+			if send:
+				#self.sendPrivateMessage(nick, line)
+				mensaplan.append(line)
+				#empty = False
+		return mensaplan
+
+
 	def command(self, nick, cmd, args, type):
 		if cmd == "!mensa":
 			try:
@@ -97,31 +123,17 @@ class MensaModule(BotModule):
 						dayOffset = toInt(args[0])
 
 				if dayOffset < 0 or dayOffset >= 5:
-					self.sendPrivateMessage(nick, "Mensa: Fehler, Tagesoffset ausserhalb der gültigen Reichweite. Fixme?")
+					self.sendPrivateMessage(nick, "Mensa: Fehler, Tagesoffset ausserhalb der gültigen Reichweite.")
 					return
 
-				empty = True
-				meals = self.getMeals()
-				for i in range(len(meals[dayOffset][0])):
-					send = False
-					line = "[" + meals[dayOffset][0][i] + "]" + ""
-					for f in range(len(meals[dayOffset][1][i])):
-						price = 0.0
-						currentMeal = meals[dayOffset][1][i][f]
-						r = re.compile("(\d+,\d\d) E")
-						prices = r.findall(currentMeal)
-						if(len(prices) == 1):
-							price = toFloat(prices[0].replace(",","."))
-						if price > 1.0:
-							send = True
-							if f != 0:
-								line = line + " - "
-							line = line + currentMeal
-					if send:
-						self.sendPrivateMessage(nick, line)
-						empty = False
-				if empty:
+				mensaplan = self.buildMensaplan(dayOffset)
+
+				if len(mensaplan) == 0:
 					self.sendPrivateMessage(nick, "Keine Gerichte gefunden.")
+				else:
+					for s in mensaplan:
+						self.sendPrivateMessage(nick, s)
+
 			except:
 				self.sendPrivateMessage(nick, "Exception returned. Fixme!")
 				
