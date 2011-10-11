@@ -39,7 +39,11 @@ class FSIBot(SingleServerIRCBot):
 	def start(self):
 		self.log("Connecting to " + self.server_list[0][0] + ":" + str(self.server_list[0][1]))
 		try:
-			SingleServerIRCBot.start(self)	
+			#SingleServerIRCBot.start(self)	
+			self._connect()
+			#SimpleIRCClient.start(self)
+			while 1:
+				self.ircobj.process_once(timeout=0.2)
 		except KeyboardInterrupt:
 			self.log("^C caught")
 			self.connection.disconnect("^C caught")
