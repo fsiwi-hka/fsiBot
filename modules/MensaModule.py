@@ -8,7 +8,7 @@ import urllib2
 import unicodedata
 from BeautifulSoup import BeautifulSoup
 
-import os, sys, re, time
+import os, sys, re, time, datetime
 
 # This seems like somebody did not know what they were doing...
 def toFloat(s):
@@ -37,7 +37,9 @@ def formatString(str):
 class MensaModule(BotModule):
 	def __init__(self):
 		self.lastFetch = 0
+		self.lastDaily = 0
 		self.cache = None
+		self.foo = False
 		return
 
 	def getMeals(self):
@@ -102,10 +104,27 @@ class MensaModule(BotModule):
 					line = line + currentMeal
 			if send:
 				#self.sendPrivateMessage(nick, line)
+				line = formatString(line)
 				mensaplan.append(line)
 				#empty = False
 		return mensaplan
 
+	def tick(self):
+		now = datetime.datetime.now()
+		ti = toInt(now.strftime("%H%M"))
+
+		offset = (60*60*24) - 60*2
+		if ti == 1230 and (self.lastDaily + offset) < time.time():
+			mensaplan = self.buildMensaplan(0)
+			if len(mensaplan) == 0:
+				return
+			
+			self.sendPublicMessage("Mensaplan für heute, via http://tinyurl.com/mensa-moltke")
+			
+			for s in mensaplan:
+				self.sendPublicMessage(s)
+		
+			self.lastDaily = time.time()
 
 	def command(self, nick, cmd, args, type):
 		if cmd == "!mensa":
@@ -131,6 +150,7 @@ class MensaModule(BotModule):
 				if len(mensaplan) == 0:
 					self.sendPrivateMessage(nick, "Keine Gerichte gefunden.")
 				else:
+					self.sendPrivateMessage(nick, "Mensaplan via http://tinyurl.com/mensa-moltke")
 					for s in mensaplan:
 						self.sendPrivateMessage(nick, s)
 
