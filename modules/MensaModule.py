@@ -114,7 +114,7 @@ class MensaModule(BotModule):
 		ti = toInt(now.strftime("%H%M"))
 
 		offset = (60*60*24) - 60*2
-		if ti == 1230 and (self.lastDaily + offset) < time.time():
+		if ti == 1230 and (self.lastDaily + offset) < time.time() and datetime.date.weekday(datetime.date.today()) <= 4:
 			mensaplan = self.buildMensaplan(0)
 			if len(mensaplan) == 0:
 				return
