@@ -5,6 +5,9 @@
 class BotModule(object):
 	def __init__(self):
 		return
+
+	def tick(self):
+		return
 	
 	def setup(self, private, public, privaction, pubaction, debug):
 		self.sendPrivateMessage = private

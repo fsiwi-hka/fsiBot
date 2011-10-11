@@ -44,6 +44,9 @@ class FSIBot(SingleServerIRCBot):
 			#SimpleIRCClient.start(self)
 			while 1:
 				self.ircobj.process_once(timeout=0.2)
+				for mod in self.activeModules:
+					mod.tick()
+                
 		except KeyboardInterrupt:
 			self.log("^C caught")
 			self.connection.disconnect("^C caught")
