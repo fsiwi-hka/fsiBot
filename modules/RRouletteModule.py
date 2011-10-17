@@ -22,13 +22,13 @@ class RRouletteModule(BotModule):
 		return rev
 
 	def command(self, nick, cmd, args, type):
-		# Reload revolver if ppl havent played in a while
-		if len(self.revolver) != self.size and time.time() > self.lastShot + 60*60*2:
-			self.revolver = self.reload()
-			self.sendPublicMessage("Starte neues Spiel.")
-
 		# let em shoot
 		if cmd == '!roulette' and type == 'public':
+			# Reload revolver if ppl havent played in a while
+			if len(self.revolver) != self.size and time.time() > self.lastShot + 60*60*2:
+				self.revolver = self.reload()
+				self.sendPublicMessage("Starte neues Spiel.")
+
 			if self.revolver.pop() == 'bullet':
 				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann... Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.'
 				self.revolver = self.reload()
