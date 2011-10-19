@@ -110,6 +110,10 @@ class FSIBot(SingleServerIRCBot):
 	def sendPublicAction(self, message):
 		self.connection.action(self.channel, message)
 
+	def kick(self, nick, message):
+		self.connection.kick(self.channel, nick, message)
+
+
 	# Adds a module to the module list
 	def addModule(self, module):
 		self.loadModule(module)

@@ -31,6 +31,7 @@ class RRouletteModule(BotModule):
 
 			if self.revolver.pop() == 'bullet':
 				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann... Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.'
+				self.kick(nick, 'Haha!')
 				self.revolver = self.reload()
 			else:
 				line = '*click* - ' + nick + ' ist ein Glückspilz. Nächster?'
