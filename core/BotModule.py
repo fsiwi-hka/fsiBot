@@ -9,11 +9,12 @@ class BotModule(object):
 	def tick(self):
 		return
 	
-	def setup(self, private, public, privaction, pubaction, debug):
+	def setup(self, private, public, privaction, pubaction, kick, debug):
 		self.sendPrivateMessage = private
 		self.sendPublicMessage = public
 		self.sendPrivateAction = privaction
 		self.sendPublicAction = pubaction
+		self.kick = kick
 		self.DEBUG = debug
 
 # An example on howto write modules
