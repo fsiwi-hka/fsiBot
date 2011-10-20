@@ -18,6 +18,8 @@ class RRouletteModule(BotModule):
 			rev.append('empty')
 
 		rev[random.randint(0,self.size-1)] = 'bullet'
+		
+		self.sendPublicMessage('Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.');
 
 		return rev
 
@@ -27,11 +29,11 @@ class RRouletteModule(BotModule):
 			# Reload revolver if ppl havent played in a while
 			if len(self.revolver) != self.size and time.time() > self.lastShot + 60*60*2:
 				self.revolver = self.reload()
-				self.sendPublicMessage("Starte neues Spiel.")
+				#self.sendPublicMessage("Starte neues Spiel.")
 
 			if self.revolver.pop() == 'bullet':
-				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann... Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.'
-				self.kick(nick, 'Haha!')
+				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann...' # Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.'
+				self.kick(nick, line)
 				self.revolver = self.reload()
 			else:
 				line = '*click* - ' + nick + ' ist ein Glückspilz. Nächster?'
