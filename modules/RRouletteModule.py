@@ -30,7 +30,8 @@ class RRouletteModule(BotModule):
 				self.sendPublicMessage('Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.')
 
 			if self.revolver.pop() == 'bullet':
-				self.sendPublicMessage('Bang!! ' + nick + ' geht von uns wie ein echter Mann...')
+				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann...'
+				self.sendPublicMessage(line)
 				self.kick(nick, line)
 				self.revolver = self.reload()
 				self.sendPublicMessage('Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.')
