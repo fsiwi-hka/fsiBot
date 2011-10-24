@@ -31,5 +31,5 @@ class BeerModule(BotModule):
 				self.sendPublicAction(line)
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!beer - Verteilt Bier.")
+		self.sendPrivateMessage(nick, "!bier/!beer - Verteilt Bier.")
 		return
