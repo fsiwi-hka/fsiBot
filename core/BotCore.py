@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # coding=utf8
 
+import BotModule
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
@@ -150,6 +151,10 @@ class FSIBot(SingleServerIRCBot):
 				for k, v in cl.items():
 					name = v.name
 					base = v.super
+	
+					if not isinstance(v.super, str):
+						if not isinstance(v.super[0], str):
+							base = v.super[0].name
 					if "BotModule" in base:
 						availableModules.append(name)
 		return availableModules

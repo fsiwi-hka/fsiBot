@@ -11,6 +11,7 @@ sys.path.insert(0, "modules/")
 sys.path.insert(0, "modules/config/")
 
 import config
+from BotModule import BotModule
 from BotCore import FSIBot
 
 # Open config file
