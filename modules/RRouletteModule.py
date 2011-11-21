@@ -7,7 +7,7 @@ import os, sys, random, time
 
 class RRouletteModule(BotModule):
 	def __init__(self):
-		self.size = 7
+		self.size = 6
 		self.lastShot = 0
 		self.revolver = self.reload()
 		return
