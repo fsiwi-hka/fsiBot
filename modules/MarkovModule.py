@@ -31,7 +31,10 @@ class MarkovChatter(object):
 		else:
 			message = []
 			for i in xrange(length):
-				message.append(random.choice(self.markov[random.choice(self.markov.keys())]))
+				try:
+					message.append(random.choice(self.markov[random.choice(self.markov.keys())]))
+				except IndexError:
+					continue
 		for i in xrange(max):
 			try:
 				next_word = random.choice(self.markov[tuple(buf)])
@@ -55,9 +58,9 @@ class MarkovModule(BotModule):
 	def onMessage(self, type, msg):
 		if type == 'public':
 			if(msg.startswith(self.nick + ":")):
-				self.sendPublicMessage(self.markov.buildSentence(msg[7:], 2))
+				self.sendPublicMessage(self.markov.buildSentence(msg[7:], 12))
 			else:
-				self.markov.addToBrain(msg, 2)
+				self.markov.addToBrain(msg, 12)
 		
 
 	def help(self, nick):
