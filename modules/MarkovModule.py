@@ -7,7 +7,7 @@ import os, sys, random
 from collections import defaultdict
 import random, pickle, os
 
-class MarkovChatter(BotModule):
+class MarkovChatter(object):
 	def __init__(self):
 		self.markov = defaultdict(list)
 		self.delimiter = "\n"
