@@ -12,7 +12,8 @@ class BotModule(object):
 	def onMessage(self, type, msg):
 		return
 	
-	def setup(self, private, public, privaction, pubaction, kick, debug):
+	def setup(self, nick,  private, public, privaction, pubaction, kick, debug):
+		self.nick = nick
 		self.sendPrivateMessage = private
 		self.sendPublicMessage = public
 		self.sendPrivateAction = privaction
