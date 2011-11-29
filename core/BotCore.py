@@ -123,7 +123,7 @@ class FSIBot(SingleServerIRCBot):
 	def loadModule(self, module):
 		mod = __import__(module)
 		modobj = getattr(mod, module)() #eval("mod." + module + "()")
-		modobj.setup(self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.kick, self.DEBUG)
+		modobj.setup(self.nick, self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.kick, self.DEBUG)
 		self.activeModules.append(modobj)
 
     # Reload all modules
