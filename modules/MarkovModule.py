@@ -7,7 +7,7 @@ import os, sys, random
 from collections import defaultdict
 import random, pickle, os
 
-class MarkovChatter:
+class MarkovChatter(BotModule):
 	def __init__(self):
 		self.markov = defaultdict(list)
 		self.delimiter = "\n"
@@ -54,7 +54,7 @@ class MarkovModule(BotModule):
 
 	def onMessage(self, type, msg):
 		if type == 'public':
-			if(msg.startswith("fsiBot: ")):
+			if(msg.startswith(self.nick + ":")):
 				self.sendPublicMessage(self.markov.buildSentence(msg[7:], 2))
 			else:
 				self.markov.addToBrain(msg, 2)
