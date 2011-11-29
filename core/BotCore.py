@@ -296,6 +296,9 @@ class FSIBot(SingleServerIRCBot):
 		if cmd.startswith("!"):
 			for module in self.activeModules:
 				module.command(nick, cmd, args, type)
+		else:
+			for module in self.activeModules:
+				module.onMessage(type, e.arguments()[0])
 
 	# Dumps the number of chat users to a logfile
 	def dump_users(self, c, e):

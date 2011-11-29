@@ -8,6 +8,9 @@ class BotModule(object):
 
 	def tick(self):
 		return
+
+	def onMessage(self, type, msg):
+		return
 	
 	def setup(self, private, public, privaction, pubaction, kick, debug):
 		self.sendPrivateMessage = private
