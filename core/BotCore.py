@@ -191,7 +191,7 @@ class FSIBot(SingleServerIRCBot):
 		# Hardcoded oper commands
 		if self.isOper(nick):
 			if cmd == "!say":
-				self.sendPublicMessage(nick, str(' '.join(args)))
+				self.sendPublicMessage(str(' '.join(args)))
 				return
 
 			if cmd == "!mod":
