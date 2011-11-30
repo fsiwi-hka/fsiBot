@@ -58,7 +58,7 @@ class MarkovModule(BotModule):
 	def onMessage(self, type, msg):
 		if type == 'public':
 			if(msg.startswith(self.nick + ":")):
-				self.sendPublicMessage(self.markov.buildSentence(msg[7:], 12))
+				self.sendPublicMessage(self.markov.buildSentence(msg[7:], 10))
 			else:
 				self.markov.addToBrain(msg, 12)
 		
