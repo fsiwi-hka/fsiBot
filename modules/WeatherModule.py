@@ -10,7 +10,6 @@ from time import *
 import os, sys, random
 import urllib
 import lxml.etree
-import unicodedata
 
 postalcode = "Karlsruhe"
 
@@ -31,10 +30,9 @@ class WeatherModule(BotModule):
 			wind = root.find(".//wind_condition").attrib["data"]
 
 #			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
-			self.sendPrivateMessage(nick, "Temp: " + temp + "°C")
-			self.sendPrivateMessage(nick, "Cond: " + cond)
-			self.sendPrivateMessage(nick, "Humi: " + humi)
-			self.sendPrivateMessage(nick, "Wind: " + wind)
+			self.sendPrivateMessage(nick, temp + "°C " + cond)
+			self.sendPrivateMessage(nick, humi)
+			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!wetter - Gibt aktuelle Wetterdaten aus.")
