@@ -36,5 +36,5 @@ class WeatherModule(BotModule):
 			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!wetter - Gibt aktuelle Wetterdaten aus.")
+		self.sendPrivateMessage(nick, "!wetter [Ort] - Gibt aktuelle Wetterdaten aus. Default Ort ist Karlsruhe.")
 		return
