@@ -24,16 +24,19 @@ class WeatherModule(BotModule):
 			data = unicode(raw, "latin1")
 			root = lxml.etree.fromstring(data).getroottree()
 
-			city = root.find(".//city").attrib["data"].encode("utf-8")
-			temp = root.find(".//temp_c").attrib["data"].encode("utf-8")
-			cond = root.find(".//condition").attrib["data"].encode("utf-8")
-			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
-			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
+			if root.find(".//problem_cause") is not None:
+				print "[WeatherModule] Error: " + root.find(".//problem_cause").attrib["data"]
+			else:
+				city = root.find(".//city").attrib["data"].encode("utf-8")
+				temp = root.find(".//temp_c").attrib["data"].encode("utf-8")
+				cond = root.find(".//condition").attrib["data"].encode("utf-8")
+				humi = root.find(".//humidity").attrib["data"].encode("utf-8")
+				wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
-			self.sendPrivateMessage(nick, temp + "°C, " + cond)
-			self.sendPrivateMessage(nick, humi)
-			self.sendPrivateMessage(nick, wind)
+				self.sendPrivateMessage(nick, "Wetter für " + city + ":")
+				self.sendPrivateMessage(nick, temp + "°C, " + cond)
+				self.sendPrivateMessage(nick, humi)
+				self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!wetter [Ort] - Gibt aktuelle Wetterdaten aus. Default Ort ist Karlsruhe.")
