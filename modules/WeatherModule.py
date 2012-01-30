@@ -11,15 +11,16 @@ import os, sys, random
 import urllib
 import lxml.etree
 
-postalcode = "Karlsruhe"
-
 class WeatherModule(BotModule):
 	def __init__(self):
 		return
 
 	def command(self, nick, cmd, args, type):
 		if cmd == "!wetter":
-			raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=us" % postalcode).read()
+			postalcode = "Karlsruhe"
+			if len(args) > 0:
+				postalcode = ' '.join(args)
+			raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % postalcode).read()
 			data = unicode(raw, "latin1")
 			root = lxml.etree.fromstring(data).getroottree()
 
@@ -29,9 +30,9 @@ class WeatherModule(BotModule):
 			humi = root.find(".//humidity").attrib["data"]
 			wind = root.find(".//wind_condition").attrib["data"]
 
-#			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
-			self.sendPrivateMessage(nick, temp + "°C " + cond)
-			self.sendPrivateMessage(nick, humi)
+			self.sendPrivateMessage(nick, "Wetter für " + city.encode("utf-8") + ":")
+			self.sendPrivateMessage(nick, temp + "°C, " + cond)
+			self.sendPrivateMessage(nick, humi.encode("utf-8"))
 			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
