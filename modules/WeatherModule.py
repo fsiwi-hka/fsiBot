@@ -24,15 +24,15 @@ class WeatherModule(BotModule):
 			data = unicode(raw, "latin1")
 			root = lxml.etree.fromstring(data).getroottree()
 
-			city = root.find(".//city").attrib["data"]
-			temp = root.find(".//temp_c").attrib["data"]
-			cond = root.find(".//condition").attrib["data"]
-			humi = root.find(".//humidity").attrib["data"]
-			wind = root.find(".//wind_condition").attrib["data"]
+			city = root.find(".//city").attrib["data"].encode("utf-8")
+			temp = root.find(".//temp_c").attrib["data"].encode("utf-8")
+			cond = root.find(".//condition").attrib["data"].encode("utf-8")
+			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
+			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			self.sendPrivateMessage(nick, "Wetter für " + city.encode("utf-8") + ":")
+			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
 			self.sendPrivateMessage(nick, temp + "°C, " + cond)
-			self.sendPrivateMessage(nick, humi.encode("utf-8"))
+			self.sendPrivateMessage(nick, humi)
 			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
