@@ -293,14 +293,15 @@ class FSIBot(SingleServerIRCBot):
 			return
 		
 		# every string that starts with an '!' is considered to be an command
-		try:
-			if cmd.startswith("!"):
-				module.command(nick, cmd, args, type)
-			else:
-				module.onMessage(type, e.arguments()[0])
-		except Exception as e:
-			self.sendPublicMessage("Module '" + str(module) + "' crashed with '" + str(e) + "', removing.")
-			del self.activeModules[self.activeModules.index(module)]
+		for module in self.activeModules:
+			try:
+				if cmd.startswith("!"):
+					module.command(nick, cmd, args, type)
+				else:
+					module.onMessage(type, e.arguments()[0])
+			except Exception as e:
+				self.sendPublicMessage("Module '" + str(module) + "' crashed with '" + str(e) + "', removing.")
+				del self.activeModules[self.activeModules.index(module)]
 
 	# Dumps the number of chat users to a logfile
 	def dump_users(self, c, e):
