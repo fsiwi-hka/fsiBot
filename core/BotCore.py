@@ -62,7 +62,7 @@ class FSIBot(SingleServerIRCBot):
 		if self.nickpassword != "":
 			c.nick(c.get_nickname() + "_")
 			time.sleep(2)
-			sendPrivateMessage("nickserv", "ghost " + self.nick + " " + self.nickpassword)
+			self.sendPrivateMessage("nickserv", "ghost " + self.nick + " " + self.nickpassword)
 			time.sleep(2)
 			c.nick(self.nick)
 			time.sleep(2)
