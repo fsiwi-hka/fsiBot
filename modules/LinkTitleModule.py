@@ -22,7 +22,7 @@ class LinkTitleModule(BotModule):
 					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text.replace('\n',''))
 
 
-	def command(self, command, nick, type):
+	def command(self, nick, command, nick, type):
 		return
 	def help(self, nick):
 		return
