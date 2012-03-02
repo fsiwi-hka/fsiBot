@@ -21,7 +21,7 @@ class LinkTitleModule(BotModule):
 				if o.scheme == 'http':
 					try:
 						html = lxml.html.parse(frag)
-						self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','')))
+						self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','').replace('\r', '')))
 					except:
 						pass
 
