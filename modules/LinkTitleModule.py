@@ -18,7 +18,6 @@ class LinkTitleModule(BotModule):
 			for frag in args:
 				o = urlparse(frag)
 				if o.scheme == 'http':
-					self.sendPublicMessage('Link gefunden')
 					html = lxml.html.parse(frag)
 					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text)
 
