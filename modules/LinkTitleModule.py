@@ -23,6 +23,6 @@ class LinkTitleModule(BotModule):
 
 
 	def command(self, command, nick, type):
-
+		return
 	def help(self, nick):
 		return
