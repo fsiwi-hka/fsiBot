@@ -20,7 +20,7 @@ class LinkTitleModule(BotModule):
 				if o.scheme == 'http':
 					self.sendPublicMessage('Link gefunden')
 					html = lxml.html.parse(frag)
-					self.sendPublicMessage('[' + o.host + '] ' + html.find('.//title').text)
+					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text)
 
 	def help(self, nick):
 		return
