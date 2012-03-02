@@ -19,7 +19,7 @@ class LinkTitleModule(BotModule):
 				o = urlparse(frag)
 				if o.scheme == 'http':
 					html = lxml.html.parse(frag)
-					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text.replace('\n','')
+					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text.replace('\n',''))
 
 	def help(self, nick):
 		return
