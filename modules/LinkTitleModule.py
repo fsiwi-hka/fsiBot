@@ -6,6 +6,7 @@
 from BotModule import BotModule
 from urlparse import urlparse
 import lxml.html
+import re
 
 
 class LinkTitleModule(BotModule):
@@ -18,9 +19,10 @@ class LinkTitleModule(BotModule):
 			for frag in args:
 				o = urlparse(frag)
 				if o.scheme == 'http':
-					html = lxml.html.parse(frag)
-					self.sendPublicMessage('[' + o.hostname + '] ' + html.find('.//title').text.replace('\n',''))
-
+					try:
+						html = lxml.html.parse(frag)
+						self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','')))
+					except:
 
 	def command(self, nick, cmd, args, type):
 		return
