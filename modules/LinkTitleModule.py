@@ -19,12 +19,11 @@ class LinkTitleModule(BotModule):
 			for frag in args:
 				o = urlparse(frag)
 				if o.scheme == 'http':
-					try:
+#					try:
 						html = lxml.html.parse(frag)
 						self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','')))
-					except:
-						self.sendPublicMessage(sys.exc_info()[0])
-						pass
+#					except:
+#						pass
 
 	def command(self, nick, cmd, args, type):
 		return
