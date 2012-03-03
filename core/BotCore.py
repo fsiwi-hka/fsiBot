@@ -5,7 +5,7 @@ import BotModule
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
-import os, sys, pyclbr, random, time, datetime, itertools
+import os, sys, pyclbr, random, time, datetime, itertools, traceback
 
 def timestamp():
 	now = datetime.datetime.now()
@@ -301,6 +301,7 @@ class FSIBot(SingleServerIRCBot):
 					module.onMessage(type, e.arguments()[0])
 			except Exception as e:
 				self.sendPublicMessage("Module '" + str(module) + "' crashed with '" + str(e) + "', removing.")
+				print traceback.format_exc()
 				del self.activeModules[self.activeModules.index(module)]
 
 	# Dumps the number of chat users to a logfile
