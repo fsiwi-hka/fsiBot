@@ -1,8 +1,6 @@
 #! /usr/bin/env python
 # coding=utf8
 
-# Geklaut bei qchn.
-
 from BotModule import BotModule
 from urlparse import urlparse
 import lxml.html
@@ -19,11 +17,13 @@ class LinkTitleModule(BotModule):
 			for frag in args:
 				o = urlparse(frag)
 				if o.scheme == 'http':
-					try:
+#					try:
 						html = lxml.html.parse(frag)
-						self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','').replace('\r', '')))
-					except:
-						pass
+						answer = re.sub(r'\s+', ' ', '[' + o.hostname + '] ' + html.find('.//title').text)
+						self.sendPublicMessage(answer)						
+#self.sendPublicMessage('[' + o.hostname + '] ' + re.sub('\s{2,}', ' ', html.find('.//title').text.replace('\n','').replace('\r', '')))
+#					except:
+#						pass
 
 	def command(self, nick, cmd, args, type):
 		return
