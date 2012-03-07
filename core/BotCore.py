@@ -12,13 +12,14 @@ def timestamp():
 	return now.strftime("%Y-%m-%d %H:%M:%S")
 
 class FSIBot(SingleServerIRCBot):
-	def __init__(self, channel, nickname, password, server, port=6667, debug=False):
+	def __init__(self, config): #, channel, nickname, password, server, port=6667, debug=False):
 		self.log("Bot initialized.")
-		self.DEBUG = debug
-		SingleServerIRCBot.__init__(self, [(server, port)], nickname, nickname)
-		self.channel = channel
-		self.nick = nickname
-		self.nickpassword = password
+		self.config = config
+		self.DEBUG = config.debug
+		SingleServerIRCBot.__init__(self, [(config.server, config.port)], config.name, config.name)
+		self.channel = config.channel
+		self.nick = config.name
+		self.nickpassword = config.password
 		self.connection.add_global_handler("join", getattr(self, "inform_webusers"), 42)
 
 		for i in ["kick", "join", "quit", "part", "topic", "endofnames", "notopic"]:
@@ -164,6 +165,8 @@ class FSIBot(SingleServerIRCBot):
 		for chname, chobj in self.channels.items():
 			if not chobj.is_oper(nick):
 				return False
+		if nick not in self.config.admins:
+			return False
 		return True
 
 	# type: 'public', 'private'
@@ -226,9 +229,15 @@ class FSIBot(SingleServerIRCBot):
 							addmod = mod
 
 					if addmod is "":
-						self.sendPrivateMessage(nick, "No module added.")
+						self.sendPrivateMessage(nick, "No module added, check spelling.")
 						return
 
+					for mod in self.activeModules:
+						modname = mod.__class__.__name__
+						if modname == addmod:
+							self.sendPrivateMessage(nick, "Module already active.")
+							return
+					
 					try:
 						self.addModule(addmod)
 						self.sendPrivateMessage(nick, "Module '" + addmod + "' added.")

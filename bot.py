@@ -18,7 +18,7 @@ from BotCore import FSIBot
 cfg = config.Config(file("bot.config"))
 botcfg = cfg.bot
 
-bot = FSIBot(botcfg.channel, botcfg.name, botcfg.password, botcfg.server, botcfg.port, botcfg.debug)
+bot = FSIBot(botcfg) #botcfg.channel, botcfg.name, botcfg.password, botcfg.server, botcfg.port, botcfg.debug)
 
 # Add activated modules to the bot
 for mod in botcfg.modules:
