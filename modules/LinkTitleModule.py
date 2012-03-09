@@ -9,6 +9,7 @@
 
 from BotModule import BotModule
 from urlparse import urlparse
+from htmlentitydefs import name2codepoint
 import urllib2
 import lxml.html
 import re
