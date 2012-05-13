@@ -53,7 +53,7 @@ class TwitterModule(BotModule):
 				except:
 					pass
 			statuses = self.api.GetUserTimeline(args[0])
-			if statuses is not None:
+			if statuses is not None and 0 <= number < len(statuses):
 				if self.DEBUG:
 					print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
 				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
