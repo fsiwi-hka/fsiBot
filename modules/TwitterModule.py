@@ -57,5 +57,5 @@ class TwitterModule(BotModule):
 				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.encode('utf-8')))
 
 	def help(self, nick):
-		#self.sendPrivateMessage(nick, "")
+		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den i-t letzten Tweet von <nick>")
 		return
