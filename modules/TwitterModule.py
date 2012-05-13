@@ -25,13 +25,16 @@ class TwitterModule(BotModule):
 		tmp = 0
 		timestamp = time.time()
 		if timestamp - self.lastTick > self.offset:
-#			print "Processing tick"
+			if self.DEBUG:
+				print "Processing tick"
 			for user in self.users:
-#				print "Processing " + user + "s tweets"
+				if self.DEBUG:
+					print "Processing " + user + "s tweets"
 				statuses = self.api.GetUserTimeline(user)
 				for status in statuses:
 					if status.created_at_in_seconds > self.lastUpdate:
-#						print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
+						if self.DEBUG:
+							print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
 						self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text).encode('utf-8'))
 
 						if status.created_at_in_seconds > tmp:
@@ -42,7 +45,16 @@ class TwitterModule(BotModule):
 				self.lastUpdate = tmp
 
 	def command(self, nick, cmd, args, type):
-		return
+		if type == 'public' and (cmd == '!t' or cmd == '!twitter') and 0 < len(args) < 3:
+			number = 0
+			if len(args) > 1:
+				try:
+					number = int(args[1],0)
+				except:
+					pass
+			statuses = self.api.GetUserTimeline(args[0])
+			if statuses is not None:
+				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.encode('utf-8')))
 
 	def help(self, nick):
 		#self.sendPrivateMessage(nick, "")
