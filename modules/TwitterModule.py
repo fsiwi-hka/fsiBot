@@ -48,8 +48,9 @@ class TwitterModule(BotModule):
 		if type == 'public' and (cmd == '!t' or cmd == '!twitter') and 0 < len(args) < 3:
 			number = 0
 			if len(args) > 1:
-				number = int(args[1],0)
-				if number == 0:
+				try:
+					number = int(args[1],0)
+				except:
 					return
 			statuses = self.api.GetUserTimeline(args[0])
 			if statuses is not None and 0 <= number < len(statuses):
