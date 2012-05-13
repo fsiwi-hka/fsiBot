@@ -48,10 +48,9 @@ class TwitterModule(BotModule):
 		if type == 'public' and (cmd == '!t' or cmd == '!twitter') and 0 < len(args) < 3:
 			number = 0
 			if len(args) > 1:
-				try:
-					number = int(args[1],0)
-				except:
-					pass
+				number = int(args[1],0)
+				if number == 0:
+					return
 			statuses = self.api.GetUserTimeline(args[0])
 			if statuses is not None and 0 <= number < len(statuses):
 				if self.DEBUG:
@@ -59,5 +58,5 @@ class TwitterModule(BotModule):
 				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den i-t letzten Tweet von <nick>")
+		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
 		return
