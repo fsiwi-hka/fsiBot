@@ -35,7 +35,7 @@ class TwitterModule(BotModule):
 					if status.created_at_in_seconds > self.lastUpdate:
 						if self.DEBUG:
 							print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
-						self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text).encode('utf-8'))
+						self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
 
 						if status.created_at_in_seconds > tmp:
 							tmp = status.created_at_in_seconds
@@ -54,7 +54,9 @@ class TwitterModule(BotModule):
 					pass
 			statuses = self.api.GetUserTimeline(args[0])
 			if statuses is not None:
-				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.encode('utf-8')))
+				if self.DEBUG:
+					print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
+				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den i-t letzten Tweet von <nick>")
