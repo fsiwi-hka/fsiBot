@@ -36,16 +36,16 @@ class TwitterModule(BotModule):
 					print "Processing " + user + "s tweets"
 				try:
 					statuses = self.api.GetUserTimeline(user)
-				except:
-					return
-				for status in statuses:
-					if status.created_at_in_seconds > self.lastUpdate:
-						if self.DEBUG:
-							print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
-						self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
+					for status in statuses:
+						if status.created_at_in_seconds > self.lastUpdate:
+							if self.DEBUG:
+								print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
+							self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
 
-						if status.created_at_in_seconds > tmp:
-							tmp = status.created_at_in_seconds
+							if status.created_at_in_seconds > tmp:
+								tmp = status.created_at_in_seconds
+				except:
+					pass
 
 			self.lastTick = timestamp
 			if tmp > self.lastUpdate:
@@ -59,7 +59,10 @@ class TwitterModule(BotModule):
 					number = int(args[1],0)
 				except:
 					return
-			statuses = self.api.GetUserTimeline(args[0])
+			try:
+				statuses = self.api.GetUserTimeline(args[0])
+			except:
+				return
 			if statuses is not None and 0 <= number < len(statuses):
 				if self.DEBUG:
 					print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
