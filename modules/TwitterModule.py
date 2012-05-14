@@ -15,10 +15,14 @@ class TwitterModule(BotModule):
 		self.htmlparser = HTMLParser.HTMLParser()
 
 		for user in self.users:
-			statuses = self.api.GetUserTimeline(user)
-			for status in statuses:
-				if status.created_at_in_seconds > self.lastUpdate:
-					self.lastUpdate = status.created_at_in_seconds
+			try:
+				statuses = self.api.GetUserTimeline(user)
+		
+				for status in statuses:
+					if status.created_at_in_seconds > self.lastUpdate:
+						self.lastUpdate = status.created_at_in_seconds
+			except:
+				pass
 
 		return
 	def tick(self):
@@ -30,7 +34,10 @@ class TwitterModule(BotModule):
 			for user in self.users:
 				if self.DEBUG:
 					print "Processing " + user + "s tweets"
-				statuses = self.api.GetUserTimeline(user)
+				try:
+					statuses = self.api.GetUserTimeline(user)
+				except:
+					return
 				for status in statuses:
 					if status.created_at_in_seconds > self.lastUpdate:
 						if self.DEBUG:
