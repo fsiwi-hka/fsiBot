@@ -31,11 +31,18 @@ class TwitterModule(BotModule):
 		if timestamp - self.lastTick > self.offset:
 			if self.DEBUG:
 				print "Processing tick"
-			for user in self.users:
+			users_tmp = self.users
+			for user in users_tmp:
 				if self.DEBUG:
 					print "Processing " + user + "s tweets"
 				try:
 					statuses = self.api.GetUserTimeline(user)
+				except twitter.TwitterError, err:
+					if self.DEBUG:
+						print 'Removing %s: %s' % (user, str(err))
+					self.users.remove(user)
+					pass
+
 					for status in statuses:
 						if status.created_at_in_seconds > self.lastUpdate:
 							if self.DEBUG:
@@ -44,29 +51,40 @@ class TwitterModule(BotModule):
 
 							if status.created_at_in_seconds > tmp:
 								tmp = status.created_at_in_seconds
-				except:
-					pass
 
 			self.lastTick = timestamp
 			if tmp > self.lastUpdate:
 				self.lastUpdate = tmp
 
 	def command(self, nick, cmd, args, type):
-		if type == 'public' and (cmd == '!t' or cmd == '!twitter') and 0 < len(args) < 3:
-			number = 0
-			if len(args) > 1:
+		if cmd == '!t' or cmd == '!twitter':
+			if len(args) > 1 and args[0] == 'add':
+				if self.DEBUG:
+					print 'Adding ' + ', '.join(args[1:])
+				self.users.extend(args[1:])
+
+			elif len(args) > 1 and args[0] == 'del':
+				if self.DEBUG:
+					print 'Removing %s' % ', '.join(args[1:])
+				for u in args[1:]:
+					if u in self.users:
+						self.users.remove(u)
+
+			elif type == 'public' and 0 < len(args) < 3:
+				number = 0
+				if len(args) > 1:
+					try:
+						number = int(args[1],0)
+					except:
+						return
 				try:
-					number = int(args[1],0)
+					statuses = self.api.GetUserTimeline(args[0])
 				except:
 					return
-			try:
-				statuses = self.api.GetUserTimeline(args[0])
-			except:
-				return
-			if statuses is not None and 0 <= number < len(statuses):
-				if self.DEBUG:
-					print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
-				self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
+				if statuses is not None and 0 <= number < len(statuses):
+					if self.DEBUG:
+						print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
+					self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
