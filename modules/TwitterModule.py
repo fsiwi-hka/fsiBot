@@ -42,7 +42,12 @@ class TwitterModule(BotModule):
 						print 'Removing %s: %s' % (user, str(err))
 					self.users.remove(user)
 					pass
+				except Exception as e:
+					if self.DEBUG:
+						print 'unhandled exception: %s' % str(e)
+					pass
 
+				if status is not None:
 					for status in statuses:
 						if status.created_at_in_seconds > self.lastUpdate:
 							if self.DEBUG:
