@@ -12,7 +12,7 @@ class BotModule(object):
 	def onMessage(self, type, msg):
 		return
 	
-	def setup(self, nick,  private, public, privaction, pubaction, kick, debug):
+	def setup(self, nick,  private, public, privaction, pubaction, kick, debug, users):
 		self.nick = nick
 		self.sendPrivateMessage = private
 		self.sendPublicMessage = public
@@ -20,6 +20,7 @@ class BotModule(object):
 		self.sendPublicAction = pubaction
 		self.kick = kick
 		self.DEBUG = debug
+		self.getAllUsers = users
 
 # An example on howto write modules
 class HelloWorldExample(BotModule):
