@@ -338,6 +338,7 @@ class FSIBot(SingleServerIRCBot):
 						for user in chobj.users():
 							if self.isOper(user) is True:
 								items.append(user)
+			items.remove(nick)
 
 		return items
 
