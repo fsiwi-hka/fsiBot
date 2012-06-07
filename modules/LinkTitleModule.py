@@ -82,10 +82,15 @@ class LinkTitleModule(BotModule):
 						title = m.group(1)
 						if self.DEBUG:
 							print("parsed html, title is: " + title)
-							
-						title = self.htmlparser.unescape(title.decode('utf-8')).encode('utf-8')
-						if self.DEBUG:
-							print("unescaped title to: " + title)
+
+						try:
+							title = self.htmlparser.unescape(title.decode('utf-8')).encode('utf-8')
+							if self.DEBUG:
+								print("unescaped title to: " + title)
+								
+						except Exception as e:
+							if self.DEBUG:
+								print("decoding title crashed with: %s" % str(e))
 
 						if (len(title) > 200):
 							title = title[:200] + "[...]"
