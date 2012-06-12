@@ -65,7 +65,7 @@ class LinkTitleModule(BotModule):
 							print(newUrl + ": opening ...")
 						req = urllib2.Request(newUrl, headers = headers)
 						u = urllib2.urlopen(req)
-						bytes = u.read(2048)
+						bytes = u.read(4096)
 						if self.DEBUG:
 							print("read: " + bytes)
 						u.close
