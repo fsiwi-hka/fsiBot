@@ -25,7 +25,7 @@ class LinkModule(BotModule):
 						self.sendPrivateMessage(nick, link.group(1) + ': ' + link.group(2))
 
 			else:
-				reg = re.compile('\^\W*(' + args[0] + ')\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
+				reg = re.compile('\^\W*(.*' + args[0] + '.*)\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
 				# Fetch entry in table
 				for line in links:
 					link = reg.match(line)
