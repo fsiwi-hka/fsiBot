@@ -39,7 +39,7 @@ class LinkModule(BotModule):
 					self.sendPublicMessage(res)
 				elif len(matches) == 1:
 					self.sendPublicMessage(matches[0].group(2))
-				else
+				else:
 					self.sendPublicMessage("Kein Ergenbnis für " + args[0])
 
 	def help(self, nick):
