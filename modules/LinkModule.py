@@ -27,11 +27,20 @@ class LinkModule(BotModule):
 			else:
 				reg = re.compile('\^\W*(.*' + args[0] + '.*)\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
 				# Fetch entry in table
+				matches = ()
 				for line in links:
-					link = reg.match(line)
-					if link:
-						self.sendPublicMessage(link.group(2))
-
+					match = reg.match(line)
+					if match:
+						matches.append(match)
+				if len(matches) > 1:
+					res = "Folgende Links gefunden:"
+					for i in matches:
+						res += " " + i.group(1)
+					self.sendPublicMessage(res)
+				elif len(matches) == 1:
+					self.sendPublicMessage(matches[0].group(2))
+				else
+					self.sendPublicMessage("Kein Ergenbnis für " + args[0])
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!link/!l [link label] - Gibt eine bestimmte URL aus. (http://hska.info/links).")
