@@ -27,7 +27,7 @@ class LinkModule(BotModule):
 			else:
 				reg = re.compile('\^\W*(.*' + args[0] + '.*)\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
 				# Fetch entry in table
-				matches = ()
+				matches = []
 				for line in links:
 					match = reg.match(line)
 					if match:
