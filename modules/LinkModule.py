@@ -40,8 +40,8 @@ class LinkModule(BotModule):
 				elif len(matches) == 1:
 					self.sendPublicMessage(matches[0].group(2))
 				else:
-					self.sendPublicMessage("Kein Ergenbnis für " + args[0])
+					self.sendPublicMessage("Kein Ergebnis für " + args[0])
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!link/!l [link label] - Gibt eine bestimmte URL aus. (http://hska.info/links).")
+		self.sendPrivateMessage(nick, "!link/!l [link label/Suchbegriff] - Gibt eine bestimmte URL aus. (http://hska.info/links).")
 		return
