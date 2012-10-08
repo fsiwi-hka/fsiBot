@@ -25,7 +25,8 @@ class LinkModule(BotModule):
 						self.sendPrivateMessage(nick, link.group(1) + ': ' + link.group(2))
 
 			else:
-				reg = re.compile('\^\W*(.*' + args[0] + '.*)\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
+				srch = re.escape(args[0])
+				reg = re.compile('\^\W*(.*' + srch + '.*)\W*\|\W*([^\|]*?)\|', re.IGNORECASE)
 				# Fetch entry in table
 				matches = []
 				for line in links:
@@ -40,7 +41,7 @@ class LinkModule(BotModule):
 				elif len(matches) == 1:
 					self.sendPublicMessage(matches[0].group(2))
 				else:
-					self.sendPublicMessage("Kein Ergebnis für " + args[0])
+					self.sendPublicMessage("Kein Ergebnis für " + srch)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!link/!l [link label/Suchbegriff] - Gibt eine bestimmte URL aus. (http://hska.info/links).")
