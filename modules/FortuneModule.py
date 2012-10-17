@@ -11,7 +11,14 @@ class FortuneModule(BotModule):
 
 	def command(self, nick, cmd, args, type):
 		if cmd == "!fortune":
-			output = commands.getoutput("fortune -s").replace("\n", " ").replace("\t", " ")
+			fargs = "-s"
+			if len(args) >= 1:
+				if args[0] == "bofh":
+					fargs = "bofh-excuses"
+				if args[0] == "offensive":
+					fargs = "-s -o"
+
+			output = commands.getoutput("fortune " + fargs).replace("\n", " ").replace("\t", " ")
 			if type == "private":
 				self.sendPrivateMessage(nick, output)
 			else:
