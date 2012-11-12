@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # coding=utf8
 
-import BotModule
+import BotModule, pprint
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower, ip_numstr_to_quad, ip_quad_to_numstr
 
@@ -146,16 +146,19 @@ class FSIBot(SingleServerIRCBot):
 	# Checks modules/ for available modules (every class that is derrived from BotModule)
 	def getAvailableModules(self):
 		availableModules = []
+		pp = pprint.PrettyPrinter(indent=4)
+
 		for file in os.listdir(os.path.dirname("modules/")):
 			if file.endswith(".py"):
 				cl = pyclbr.readmodule(file[:-3])
 				for k, v in cl.items():
 					name = v.name
 					base = v.super
-	
+
 					if not isinstance(v.super, str):
-						if not isinstance(v.super[0], str):
+						if len(v.super) > 0 and not isinstance(v.super[0], str):
 							base = v.super[0].name
+
 					if "BotModule" in base:
 						availableModules.append(name)
 		return availableModules
