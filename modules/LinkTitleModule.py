@@ -39,7 +39,7 @@ class LinkTitleModule(BotModule):
 						u = urllib2.urlopen(req, timeout=10)
 						info = u.info()
 						newUrl = u.geturl()
-						u.close
+#						u.close
 
 						i = urlparse(newUrl)
 
@@ -50,6 +50,8 @@ class LinkTitleModule(BotModule):
 
 						try:
 							mtype = info['content-type']
+							if self.DEBUG:
+								print(newUrl + ": Content-Type is " + mtype)
 						except:
 							if self.DEBUG:
 								print(newUrl + ": Could not get the Content-Type")
@@ -63,8 +65,8 @@ class LinkTitleModule(BotModule):
 
 						if self.DEBUG:
 							print(newUrl + ": opening ...")
-						req = urllib2.Request(newUrl, headers = headers)
-						u = urllib2.urlopen(req)
+#						req = urllib2.Request(newUrl, headers = headers)
+#						u = urllib2.urlopen(req)
 						bytes = u.read(4096)
 						if self.DEBUG:
 							print("read: " + bytes)
