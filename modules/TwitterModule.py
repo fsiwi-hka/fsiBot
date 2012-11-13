@@ -4,76 +4,103 @@
 from BotModule import BotModule
 import twitter, time, HTMLParser
 
+class TwitterUser:
+	def __init__(self, nick):
+		self.nick = nick
+		self.lastUpdate = time.time()
+		self.lastId = 0
+
+	def updateTimestamp(self, timestamp):
+		if timestamp > self.lastUpdate:
+			self.lastUpdate = timestamp
+
+	def updateId(self, lastId):
+		if id > self.lastId:
+			self.lastId = lastId
+
 class TwitterModule(BotModule):
 
 	def __init__(self):
 		self.offset = 30
-		self.users = ['cyberchampionka']
+		self.users = [TwitterUser('cyberchampionka')]
 		self.lastTick = time.time()
 		self.api = twitter.Api()
-		self.lastUpdate = 0
 		self.htmlparser = HTMLParser.HTMLParser()
 
-		for user in self.users:
-			try:
-				statuses = self.api.GetUserTimeline(user)
-		
-				for status in statuses:
-					if status.created_at_in_seconds > self.lastUpdate:
-						self.lastUpdate = status.created_at_in_seconds
-			except:
-				pass
-
 		return
+
 	def tick(self):
 		tmp = 0
 		timestamp = time.time()
+
+		# max requests = 150!
 		if timestamp - self.lastTick > self.offset:
 			if self.DEBUG:
 				print "Processing tick"
 			users_tmp = self.users
 			for user in users_tmp:
 				if self.DEBUG:
-					print "Processing " + user + "s tweets"
+					print "Processing " + user.nick + "s tweets"
 				try:
-					statuses = self.api.GetUserTimeline(user)
+					statuses = self.api.GetUserTimeline(id = user.nick, since_id = user.lastId, include_rts = True)
 				except twitter.TwitterError, err:
-					if self.DEBUG:
-						print 'Removing %s: %s' % (user, str(err))
-					self.users.remove(user)
-					pass
+					if str(err).startswith('Rate limit exceeded.'):
+						if self.DEBUG:
+							print '%s: Disabling for 60 Minutes' % str(err)
+						self.lastTick = timestamp + 60*60
+						return
+					elif str(err).startswith('Not authorized'):
+						if self.DEBUG:
+							print 'Removing %s: %s' % (user.nick, str(err))
+						self.users.remove(user)
+					elif str(err).startswith('Not found'):
+						if self.DEBUG:
+							print 'Removing %s: %s' % (user.nick, str(err))
+						self.users.remove(user)
+					else: 
+						if self.DEBUG:
+							print 'Unknown Error! Removing %s: %s' % (user.nick, str(err))
+						self.users.remove(user)
+					continue
+
 				except Exception as e:
 					if self.DEBUG:
 						print 'unhandled exception: %s' % str(e)
-					pass
+					continue
 
-				if status is not None:
-					for status in statuses:
-						if status.created_at_in_seconds > self.lastUpdate:
-							if self.DEBUG:
-								print "Sending to channel: [" + user + "] " + status.text.replace('\n','').replace('\r','')
-							self.sendPublicMessage('[' + self.htmlparser.unescape(user).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
+				tmp_created = 0
+				tmp_id = 0
+				for status in statuses:
+					if status.created_at_in_seconds > user.lastUpdate:
+						if self.DEBUG:
+							print "Sending to channel: [" + user.nick + "] " + status.text.replace('\n','').replace('\r','')
+						self.sendPublicMessage('[' + self.htmlparser.unescape(user.nick).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
+						if tmp_created < status.created_at_in_seconds:
+							tmp_created = status.created_at_in_seconds
+						if tmp_id < status.id:
+							tmp_id = status.id
 
-							if status.created_at_in_seconds > tmp:
-								tmp = status.created_at_in_seconds
+				user.updateTimestamp(tmp_created)
+				user.updateId(tmp_id)
+
 
 			self.lastTick = timestamp
-			if tmp > self.lastUpdate:
-				self.lastUpdate = tmp
 
 	def command(self, nick, cmd, args, type):
 		if cmd == '!t' or cmd == '!twitter':
 			if len(args) > 1 and args[0] == 'add':
 				if self.DEBUG:
 					print 'Adding ' + ', '.join(args[1:])
-				self.users.extend(args[1:])
+				self.users.extend([TwitterUser(u) for u in args[1:]])
 
 			elif len(args) > 1 and args[0] == 'del':
 				if self.DEBUG:
 					print 'Removing %s' % ', '.join(args[1:])
 				for u in args[1:]:
-					if u in self.users:
-						self.users.remove(u)
+					tmp_user = self.users
+					for user in tmp_user:
+						if user.nick == u:
+							self.users.remove(user)
 
 			elif type == 'public' and 0 < len(args) < 3:
 				number = 0
@@ -93,4 +120,7 @@ class TwitterModule(BotModule):
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
+		self.sendPrivateMessage(nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
+		self.sendPrivateMessage(nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
+		
 		return
