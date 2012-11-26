@@ -70,11 +70,11 @@ class TwitterModule(BotModule):
 
 				tmp_created = 0
 				tmp_id = 0
-				for status in statuses:
+				for status in reversed(statuses):
 					if status.created_at_in_seconds > user.lastUpdate:
 						if self.DEBUG:
 							print "Sending to channel: [" + user.nick + "] " + status.text.replace('\n','').replace('\r','')
-						self.sendPublicMessage('[' + self.htmlparser.unescape(user.nick).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
+						self.sendPublicMessage('[@' + self.htmlparser.unescape(user.nick).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
 						if tmp_created < status.created_at_in_seconds:
 							tmp_created = status.created_at_in_seconds
 						if tmp_id < status.id:
