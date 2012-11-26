@@ -116,7 +116,7 @@ class TwitterModule(BotModule):
 				if statuses is not None and 0 <= number < len(statuses):
 					if self.DEBUG:
 						print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
-					self.sendPublicMessage('[' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
+					self.sendPublicMessage('[@' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
