@@ -104,8 +104,8 @@ class TwitterModule(BotModule):
 
 			elif args[0] == 'list':
 				if self.DEBUG:
-					print 'Printing userlist ' + ', '.join([user.nick for user in self.users])
-				self.sendPublicMessage('[Twitter] ' + ', '.join([user.nick for user in self.users]))
+					print 'Printing userlist ' + ', '.join(user.nick for user in self.users)
+				self.sendPublicMessage('[Twitter] ' + ', '.join(user.nick for user in self.users))
 
 			elif type == 'public' and 0 < len(args) < 3:
 				number = 0
@@ -127,5 +127,6 @@ class TwitterModule(BotModule):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
 		self.sendPrivateMessage(nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
 		self.sendPrivateMessage(nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
+		self.sendPrivateMessage(nick, "!t[witter] list Zeigt die derzeit gefolten User an")
 		
 		return
