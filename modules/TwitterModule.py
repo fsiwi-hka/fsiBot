@@ -102,6 +102,11 @@ class TwitterModule(BotModule):
 						if user.nick == u:
 							self.users.remove(user)
 
+			elif args[0] == 'list':
+				if self.DEBUG:
+					print 'Printing userlist ' + ', '.join([user.nick for user in self.users])
+				self.sendPublicMessage('[Twitter] ' + ', '.join([user.nick for user in self.users]))
+
 			elif type == 'public' and 0 < len(args) < 3:
 				number = 0
 				if len(args) > 1:
