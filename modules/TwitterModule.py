@@ -21,7 +21,7 @@ class TwitterUser:
 class TwitterModule(BotModule):
 
 	def __init__(self):
-		self.offset = 30
+		self.offset = 60 * 5
 		self.users = [TwitterUser('cyberchampionka')]
 		self.lastTick = time.time()
 		self.api = twitter.Api()
