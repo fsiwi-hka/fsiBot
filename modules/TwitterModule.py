@@ -98,7 +98,7 @@ class TwitterModule(BotModule):
 					print 'Removing %s' % ', '.join(args[1:])
 				for u in args[1:]:
 					for user in self.users:
-						if user.nick == user:
+						if user.nick == u:
 							self.users.remove(user)
 
 			elif args[0] == 'list':
