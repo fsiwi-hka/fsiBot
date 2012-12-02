@@ -10,7 +10,8 @@ from urlparse import urlparse
 import urllib2, lxml.html, re, HTMLParser
 
 class LinkTitleModule(BotModule):
-	maxredirects = 10
+	maxredirects 	= 10
+	shortenUrls 	= 1
 
 	def __init__(self):
 		self.htmlparser = HTMLParser.HTMLParser()
@@ -47,6 +48,10 @@ class LinkTitleModule(BotModule):
 							if self.DEBUG:
 								print (newUrl + ' matched for localhost')
 							return
+
+						if self.shortenUrls:
+							link = urllib2.urlopen(urllib2.Request('http://tinyurl.com/api-create.php?url=' + uri), timeout=10).read()
+							self.sendPublicMessage('[short] ' + link)
 
 						try:
 							mtype = info['content-type']
