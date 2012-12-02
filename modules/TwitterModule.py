@@ -97,15 +97,20 @@ class TwitterModule(BotModule):
 				if self.DEBUG:
 					print 'Removing %s' % ', '.join(args[1:])
 				for u in args[1:]:
-					tmp_user = self.users
-					for user in tmp_user:
-						if user.nick == u:
+					for user in self.users:
+						if user.nick == user:
 							self.users.remove(user)
 
 			elif args[0] == 'list':
 				if self.DEBUG:
 					print 'Printing userlist ' + ', '.join(user.nick for user in self.users)
-				self.sendPublicMessage('[Twitter] ' + ', '.join(user.nick for user in self.users))
+
+				answer = '[Twitter] ' + ', '.join(user.nick for user in self.users)
+
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				elif type == 'private':
+					self.sendPrivateMessage(nick, answer)
 
 			elif type == 'public' and 0 < len(args) < 3:
 				number = 0
