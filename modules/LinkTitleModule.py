@@ -49,7 +49,7 @@ class LinkTitleModule(BotModule):
 								print (newUrl + ' matched for localhost')
 							return
 
-						if self.shortenUrls:
+						if self.shortenUrls and len(uri) > 80:
 							link = urllib2.urlopen(urllib2.Request('http://tinyurl.com/api-create.php?url=' + uri), timeout=10).read()
 							self.sendPublicMessage('[short] ' + link)
 
