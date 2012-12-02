@@ -12,6 +12,7 @@ import urllib2, lxml.html, re, HTMLParser
 class LinkTitleModule(BotModule):
 	maxredirects 	= 10
 	shortenUrls 	= 1
+	blacklist		= ['forum.hska.info']
 
 	def __init__(self):
 		self.htmlparser = HTMLParser.HTMLParser()
@@ -46,7 +47,12 @@ class LinkTitleModule(BotModule):
 
 						if i.hostname == 'localhost' or i.hostname.startswith('127.'):
 							if self.DEBUG:
-								print (newUrl + ' matched for localhost')
+								print (uri + ' matched for localhost')
+							return
+
+						if i.hostname in self.blacklist:
+							if self.DEBUG:
+								print (uri + ' is on blacklist')
 							return
 
 						if self.shortenUrls and len(uri) > 80:
