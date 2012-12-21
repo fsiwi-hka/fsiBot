@@ -88,6 +88,15 @@ class TwitterModule(BotModule):
 
 	def command(self, nick, cmd, args, type):
 		if cmd == '!t' or cmd == '!twitter':
+			if len(args) == 0:
+				answer = "Twitter module expects at least 1 parameter!"
+
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				elif type == 'private':
+					self.sendPrivateMessage(nick, answer)
+				return
+
 			if len(args) > 1 and args[0] == 'add':
 				if self.DEBUG:
 					print 'Adding ' + ', '.join(args[1:])
