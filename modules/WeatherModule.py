@@ -2,7 +2,7 @@
 # coding=utf8
 from BotModule import BotModule
 
-import urllib
+import urllib, json
 
 class WeatherModule(BotModule):
 	def __init__(self):
