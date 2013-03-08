@@ -20,7 +20,15 @@ class WeatherModule(BotModule):
 			postalcode = "Karlsruhe"
 			if len(args) > 0:
 				postalcode = ' '.join(args)
-			raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode)).read()
+			try:
+				raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode)).read()
+			expect urllib2.HTTPError, e:
+				print e.code
+				return
+			expect urllib2.URLError, e:
+				print e.args
+				return
+
 			data = unicode(raw, "latin1")
 			root = lxml.etree.fromstring(data).getroottree()
 
