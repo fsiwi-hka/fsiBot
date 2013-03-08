@@ -13,6 +13,11 @@ class WeatherModule(BotModule):
 			postalcode = "Karlsruhe"
 			if len(args) > 0:
 				postalcode = ' '.join(args)
+
+			if postalcode == 'Honoluluuu'
+				self.sendPublicMessage('Computer sagt: NEIN!')
+				return
+
 			try:
 				u = urllib.urlopen("http://api.openweathermap.org/data/2.1/find/name?q=%s&type=like&units=metric" % urllib.quote(postalcode))
 			except urllib2.HTTPError, e:
@@ -31,6 +36,14 @@ class WeatherModule(BotModule):
 
 			jsondata = json.loads(u.read())
 
+			if jsondata['message'] != '':
+				answer = jsondata['message'].encode('utf-8')
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				else :
+					self.sendPrivateMessage(nick, answer)
+				return
+
 			city = jsondata['list'][0]['name']
 			temp = jsondata['list'][0]['main']['temp']
 			cond = jsondata['list'][0]['weather'][0]['description']
@@ -43,6 +56,7 @@ class WeatherModule(BotModule):
 				self.sendPublicMessage(answer)
 			else :
 				self.sendPrivateMessage(nick, answer)
+
 #			self.sendPrivateMessage(nick, humi)
 #			self.sendPrivateMessage(nick, wind)
 
