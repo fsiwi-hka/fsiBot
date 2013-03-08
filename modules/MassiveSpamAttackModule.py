@@ -25,10 +25,12 @@ class MassiveSpamAttackModule(BotModule):
 						msg += user
 
 					msg += ": "
+					self.sendPublicMessage("Von " + nick + " an " + msg)
+					msg = ""
 					for chunk in args[1::1]:
 						msg += chunk + " "
 
-					self.sendPublicMessage("Von " + nick + " an " + msg)
+					self.sendPublicMessage(msg)
 
 
 

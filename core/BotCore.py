@@ -334,9 +334,9 @@ class FSIBot(SingleServerIRCBot):
 					if mode == "all":						
 						items = chobj.users()
 
-					elif mode == "fs":						
+					elif mode == "fs":
 						for user in chobj.users():
-							if self.isOper(user) is True:
+							if chobj.is_oper(user) is True:
 								items.append(user)
 			items.remove(nick)
 
