@@ -22,10 +22,10 @@ class WeatherModule(BotModule):
 				postalcode = ' '.join(args)
 			try:
 				raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode)).read()
-			expect urllib2.HTTPError, e:
+			except urllib2.HTTPError, e:
 				print e.code
 				return
-			expect urllib2.URLError, e:
+			except urllib2.URLError, e:
 				print e.args
 				return
 
