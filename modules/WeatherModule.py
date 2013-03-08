@@ -1,15 +1,8 @@
 #! /usr/bin/env python
 # coding=utf8
-
-# Geklaut bei qchn.
-
 from BotModule import BotModule
 
-from time import *
-
-import os, sys, random
 import urllib
-import lxml.etree
 
 class WeatherModule(BotModule):
 	def __init__(self):
@@ -21,14 +14,14 @@ class WeatherModule(BotModule):
 			if len(args) > 0:
 				postalcode = ' '.join(args)
 			try:
-				u = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode))
+				u = urllib.urlopen("http://api.openweathermap.org/data/2.1/find/name?q=%s&type=like&units=metric" % urllib.quote(postalcode))
 			except urllib2.HTTPError, e:
 				if self.DEBUG:
-					print e.code
+					print 'Error fetching data, Error: %s' % e.code
 				return
 			except urllib2.URLError, e:
 				if self.DEBUG:
-					print e.args
+					print 'Error fetching data, Error: %s' % e.args
 				return
 
 			if u.getcode() != 200:
@@ -36,24 +29,18 @@ class WeatherModule(BotModule):
 					print 'Error fetching data, Errorcode: %s' % u.getcode()
 				return
 
-			raw = u.read()
+			jsondata = json.loads(u.read())
 
-			data = unicode(raw, "latin1")
-			root = lxml.etree.fromstring(data).getroottree()
+			city = jsondata['list'][0]['name']
+			temp = jsondata['list'][0]['main']['temp']
+			cond = jsondata['list'][0]['weather']['description']
+#			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
+#			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			if root.find(".//problem_cause") is not None:
-				print "[WeatherModule] Error: " + root.find(".//problem_cause").attrib["data"]
-			else:
-				city = root.find(".//city").attrib["data"].encode("utf-8")
-				temp = root.find(".//temp_c").attrib["data"].encode("utf-8")
-				cond = root.find(".//condition").attrib["data"].encode("utf-8")
-				humi = root.find(".//humidity").attrib["data"].encode("utf-8")
-				wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
-
-				self.sendPrivateMessage(nick, "Wetter für " + city + ":")
-				self.sendPrivateMessage(nick, temp + "°C, " + cond)
-				self.sendPrivateMessage(nick, humi)
-				self.sendPrivateMessage(nick, wind)
+			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
+			self.sendPrivateMessage(nick, temp + "°C, " + cond)
+#			self.sendPrivateMessage(nick, humi)
+#			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!wetter [Ort] - Gibt aktuelle Wetterdaten aus. Default Ort ist Karlsruhe.")
