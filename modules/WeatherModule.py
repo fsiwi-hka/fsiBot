@@ -31,14 +31,14 @@ class WeatherModule(BotModule):
 
 			jsondata = json.loads(u.read())
 
-			city = jsondata['list'][0]['name'].encode('utf-8')
-			temp = jsondata['list'][0]['main']['temp'].encode('utf-8')
-			cond = jsondata['list'][0]['weather'][0]['description'].encode('utf-8')
+			city = jsondata['list'][0]['name']
+			temp = jsondata['list'][0]['main']['temp']
+			cond = jsondata['list'][0]['weather'][0]['description']
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			self.sendPrivateMessage(nick, "Wetter für " + city + ":")
-			self.sendPrivateMessage(nick, temp + "°C, " + cond)
+			self.sendPrivateMessage(nick, "Wetter für %s:" % city.encode('utf-8'))
+			self.sendPrivateMessage(nick, "%.2f °C, %s" % temp, cond.encode('utf-8'))
 #			self.sendPrivateMessage(nick, humi)
 #			self.sendPrivateMessage(nick, wind)
 
