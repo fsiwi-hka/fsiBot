@@ -38,7 +38,7 @@ class WeatherModule(BotModule):
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
 			self.sendPrivateMessage(nick, "Wetter für %s:" % city.encode('utf-8'))
-			self.sendPrivateMessage(nick, "%.2f °C, %s" % temp, cond.encode('utf-8'))
+			self.sendPrivateMessage(nick, "%.2f °C, %s" % (temp, cond.encode('utf-8')))
 #			self.sendPrivateMessage(nick, humi)
 #			self.sendPrivateMessage(nick, wind)
 
