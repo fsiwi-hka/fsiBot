@@ -31,9 +31,9 @@ class WeatherModule(BotModule):
 
 			jsondata = json.loads(u.read())
 
-			city = jsondata['list'][0]['name']
-			temp = jsondata['list'][0]['main']['temp']
-			cond = jsondata['list'][0]['weather'][0]['description']
+			city = jsondata['list'][0]['name'].encode('utf-8')
+			temp = jsondata['list'][0]['main']['temp'].encode('utf-8')
+			cond = jsondata['list'][0]['weather'][0]['description'].encode('utf-8)
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
