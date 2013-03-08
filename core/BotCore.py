@@ -124,7 +124,7 @@ class FSIBot(SingleServerIRCBot):
 	def loadModule(self, module):
 		mod = __import__(module)
 		modobj = getattr(mod, module)() #eval("mod." + module + "()")
-		modobj.setup(self.nick, self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.kick, self.DEBUG)
+		modobj.setup(self.nick, self.sendPrivateMessage, self.sendPublicMessage, self.sendPrivateAction, self.sendPublicAction, self.kick, self.DEBUG, self.getAllUsers)
 		self.activeModules.append(modobj)
 
     # Reload all modules
@@ -328,6 +328,22 @@ class FSIBot(SingleServerIRCBot):
 		userfile.write(str(users))
 		userfile.close()
 		#self.log("Logged " + str(users) + " users")
+
+	def getAllUsers(self, nick, mode):
+		items = list()
+		if self.isOper(nick) is True:
+			
+			for chname, chobj in self.channels.items():
+					if mode == "all":						
+						items = chobj.users()
+
+					elif mode == "fs":
+						for user in chobj.users():
+							if chobj.is_oper(user) is True:
+								items.append(user)
+			items.remove(nick)
+
+		return items
 
 	# Sends information string to webchat users coming from our site
 	def inform_webusers(self, c, e):
