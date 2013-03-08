@@ -21,13 +21,22 @@ class WeatherModule(BotModule):
 			if len(args) > 0:
 				postalcode = ' '.join(args)
 			try:
-				raw = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode)).read()
+				u = urllib.urlopen("http://www.google.com/ig/api?weather=%s&hl=de" % urllib.quote(postalcode))
 			except urllib2.HTTPError, e:
-				print e.code
+				if self.DEBUG:
+					print e.code
 				return
 			except urllib2.URLError, e:
-				print e.args
+				if self.DEBUG:
+					print e.args
 				return
+
+			if u.getcode() != 200:
+				if self.DEBUG:
+					print 'Error fetching data, Errorcode: %s' % u.getcode
+				return
+
+			raw = u.read()
 
 			data = unicode(raw, "latin1")
 			root = lxml.etree.fromstring(data).getroottree()
