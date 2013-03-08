@@ -37,8 +37,12 @@ class WeatherModule(BotModule):
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			self.sendPrivateMessage(nick, "Wetter für %s:" % city.encode('utf-8'))
-			self.sendPrivateMessage(nick, "%.2f °C, %s" % (temp, cond.encode('utf-8')))
+			answer = "Wetter für %s: %.2f °C, %s" % (city.encode('utf-8'), temp, cond.encode('utf-8'))
+
+			if type == 'public':
+				self.sendPublicMessage(answer)
+			else :
+				self.sendPrivateMessage(nick, answer)
 #			self.sendPrivateMessage(nick, humi)
 #			self.sendPrivateMessage(nick, wind)
 
