@@ -33,7 +33,7 @@ class WeatherModule(BotModule):
 
 			if u.getcode() != 200:
 				if self.DEBUG:
-					print 'Error fetching data, Errorcode: %s' % u.getcode
+					print 'Error fetching data, Errorcode: %s' % u.getcode()
 				return
 
 			raw = u.read()
