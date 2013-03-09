@@ -50,6 +50,7 @@ class WeatherModule(BotModule):
 						self.sendPrivateMessage(nick, answer)
 				return
 
+			weather = {}
 			try:
 				weather['city'] = jsondata['list'][0]['name']
 				weather['temp'] = jsondata['list'][0]['main']['temp']
