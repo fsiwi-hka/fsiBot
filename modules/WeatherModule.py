@@ -58,7 +58,7 @@ class WeatherModule(BotModule):
 					self.sendPrivateMessage(nick, answer)
 				return
 
-			else len(jsondata['list']) > 1:
+			elif len(jsondata['list']) > 1:
 				answer = 'Mehrere Datensätze gefunden, bitte Ortsangaben genauer spezifizieren!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
