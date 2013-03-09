@@ -58,7 +58,6 @@ class WeatherModule(BotModule):
 				weather['humidity'] = jsondata['list'][0]['main']['humidity']
 				weather['windspeed'] = jsondata['list'][0]['wind']['speed']
 			except KeyError, e:
-				weather[e] = False
 				if self.DEBUG:
 					print "KeyError: %s" % e
 
