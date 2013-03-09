@@ -21,7 +21,7 @@ class WeatherModule(BotModule):
 				else :
 					self.sendPrivateMessage(nick, answer)
 				return
-			elif postalcode == 'mele island':
+			elif postalcode == 'mêlée island':
 				answer = 'Dublonen, Dublonen!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
