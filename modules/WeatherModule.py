@@ -14,7 +14,7 @@ class WeatherModule(BotModule):
 			if len(args) > 0:
 				postalcode = ' '.join(args)
 
-			if postalcode.startswith('Honoluluuu'):
+			if postalcode.startswith('Honoluluu'):
 				self.sendPublicMessage('Computer sagt: NEIN!')
 				return
 
@@ -57,28 +57,27 @@ class WeatherModule(BotModule):
 				weather['cond'] = jsondata['list'][0]['weather'][0]['description']
 				weather['humidity'] = jsondata['list'][0]['main']['humidity']
 				weather['windspeed'] = jsondata['list'][0]['wind']['speed']
+				weather['cloudiness'] = jsondata['list'][0]['clouds']['all']
 			except KeyError, e:
 				if self.DEBUG:
 					print "KeyError: %s" % e
 
-#			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
-#			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
-
 			answer = "Wetter für %s: %.2f °C, %s" % (weather['city'].encode('utf-8'), weather['temp'], weather['cond'].encode('utf-8'))
 
 			if 'windspeed' in weather:
-				answer += ", wind speed: %.1f" % weather['windspeed']
+				answer += ", wind speed: %.1fkm/h" % weather['windspeed']
 
 			if 'humidity' in weather:
-				answer += ", humidity: %d" % weather['humidity']
+				answer += ", humidity: %d%" % weather['humidity']
+
+			if 'cloudiness' in weather:
+				answer += ", cloudiness: %d%" % weather['cloudiness']
 
 			if type == 'public':
 				self.sendPublicMessage(answer)
 			else :
 				self.sendPrivateMessage(nick, answer)
 
-#			self.sendPrivateMessage(nick, humi)
-#			self.sendPrivateMessage(nick, wind)
 
 	def help(self, nick):
 		self.sendPrivateMessage(nick, "!wetter [Ort] - Gibt aktuelle Wetterdaten aus. Default Ort ist Karlsruhe.")
