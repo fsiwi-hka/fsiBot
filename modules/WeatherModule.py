@@ -34,7 +34,12 @@ class WeatherModule(BotModule):
 					print 'Error fetching data, Errorcode: %s' % u.getcode()
 				return
 
-			jsondata = json.loads(u.read())
+			try:
+				jsondata = json.loads(u.read())
+			except ValueError, e:
+				if self.DEBUG:
+					print "ValueError %s" % e
+				return
 
 			if jsondata['cod'] != '200':
 				if jsondata['message'] != '':
