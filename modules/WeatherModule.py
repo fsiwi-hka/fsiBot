@@ -84,6 +84,7 @@ class WeatherModule(BotModule):
 				weather['cond'] = jsondata['list'][0]['weather'][0]['description']
 				weather['windspeed'] = jsondata['list'][0]['wind']['speed']
 				weather['cloudiness'] = jsondata['list'][0]['clouds']['all']
+				weather['rain_last_1h'] = jsondata['list'][0]['rain']['1h']
 				weather['humidity'] = jsondata['list'][0]['main']['humidity']
 			except KeyError, e:
 				if self.DEBUG:
@@ -99,6 +100,9 @@ class WeatherModule(BotModule):
 
 			if 'cloudiness' in weather:
 				answer += ", cloudiness: %d%%" % weather['cloudiness']
+
+			if 'rain_last_1h' in weather:
+				answer += ", rain last 1h: %.3fl/m²" % weather['rain_last_1h']
 
 			if type == 'public':
 				self.sendPublicMessage(answer)
