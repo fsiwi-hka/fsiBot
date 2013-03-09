@@ -54,7 +54,7 @@ class WeatherModule(BotModule):
 
 			if jsondata['cod'] != '200':
 				if jsondata['message'] != '':
-					answer = jsondata['message'].encode('utf-8')
+					answer = 'Leck? welches Leck?'
 					if type == 'public':
 						self.sendPublicMessage(answer)
 					else :
