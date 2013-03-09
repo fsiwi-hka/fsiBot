@@ -50,6 +50,22 @@ class WeatherModule(BotModule):
 						self.sendPrivateMessage(nick, answer)
 				return
 
+			if len(jsondata['list']) < 1:
+				answer = 'Keine passenden Daten gefunden!'
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				else :
+					self.sendPrivateMessage(nick, answer)
+				return
+
+			else len(jsondata['list']) > 1:
+				answer = 'Mehrere Datensätze gefunden, bitte Ortsangaben genauer spezifizieren!'
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				else :
+					self.sendPrivateMessage(nick, answer)
+				return
+
 			weather = {}
 			try:
 				weather['city'] = jsondata['list'][0]['name']
@@ -62,7 +78,7 @@ class WeatherModule(BotModule):
 				if self.DEBUG:
 					print "KeyError: %s" % e
 
-			answer = "Wetter für %s: %.2f °C, %s" % (weather['city'].encode('utf-8'), weather['temp'], weather['cond'].encode('utf-8'))
+			answer = "Wetter für %s: %.2f°C, %s" % (weather['city'].encode('utf-8'), weather['temp'], weather['cond'].encode('utf-8'))
 
 			if 'windspeed' in weather:
 				answer += ", wind speed: %.1fkm/h" % weather['windspeed']
