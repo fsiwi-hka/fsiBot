@@ -15,7 +15,7 @@ class WeatherModule(BotModule):
 				postalcode = ' '.join(args)
 
 			if postalcode.startswith('Honoluluu'):
-				answer = 'Computer sagt: NEIN!')
+				answer = 'Computer sagt: NEIN!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
 				else :
