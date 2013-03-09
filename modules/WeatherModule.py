@@ -61,7 +61,7 @@ class WeatherModule(BotModule):
 				weather[e] = False
 				if self.DEBUG:
 					print "KeyError: %s" % e
-				return
+
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
