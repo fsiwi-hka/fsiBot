@@ -50,11 +50,16 @@ class WeatherModule(BotModule):
 						self.sendPrivateMessage(nick, answer)
 				return
 
-			city = jsondata['list'][0]['name']
-			temp = jsondata['list'][0]['main']['temp']
-			cond = jsondata['list'][0]['weather'][0]['description']
-			humidity = jsondata['list'][0]['main']['humidity']
-			windspeed = jsondata['list'][0]['wind']['speed']
+			try:
+				city = jsondata['list'][0]['name']
+				temp = jsondata['list'][0]['main']['temp']
+				cond = jsondata['list'][0]['weather'][0]['description']
+				humidity = jsondata['list'][0]['main']['humidity']
+				windspeed = jsondata['list'][0]['wind']['speed']
+			except KeyError, e:
+				if self.DEBUG:
+					print "KeyError: %s", e
+				return
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
