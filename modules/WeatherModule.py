@@ -68,10 +68,10 @@ class WeatherModule(BotModule):
 				answer += ", wind speed: %.1fkm/h" % weather['windspeed']
 
 			if 'humidity' in weather:
-				answer += ", humidity: %d%" % weather['humidity']
+				answer += ", humidity: %d\%" % weather['humidity']
 
 			if 'cloudiness' in weather:
-				answer += ", cloudiness: %d%" % weather['cloudiness']
+				answer += ", cloudiness: %d\%" % weather['cloudiness']
 
 			if type == 'public':
 				self.sendPublicMessage(answer)
