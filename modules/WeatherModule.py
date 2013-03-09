@@ -14,7 +14,7 @@ class WeatherModule(BotModule):
 			if len(args) > 0:
 				postalcode = ' '.join(args)
 
-			if postalcode == 'Honoluluuu':
+			if postalcode.startswith('Honoluluuu'):
 				self.sendPublicMessage('Computer sagt: NEIN!')
 				return
 
@@ -36,12 +36,13 @@ class WeatherModule(BotModule):
 
 			jsondata = json.loads(u.read())
 
-			if jsondata['message'] != '':
-				answer = jsondata['message'].encode('utf-8')
-				if type == 'public':
-					self.sendPublicMessage(answer)
-				else :
-					self.sendPrivateMessage(nick, answer)
+			if jsondata['cod'] != 200:
+				if jsondata['message'] != '':
+					answer = jsondata['message'].encode('utf-8')
+					if type == 'public':
+						self.sendPublicMessage(answer)
+					else :
+						self.sendPrivateMessage(nick, answer)
 				return
 
 			city = jsondata['list'][0]['name']
