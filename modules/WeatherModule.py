@@ -65,7 +65,7 @@ class WeatherModule(BotModule):
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			answer = "Wetter für %s: %.2f °C, %s" % (city.encode('utf-8'), temp, cond.encode('utf-8'), windspeed, humidity)
+			answer = "Wetter für %s: %.2f °C, %s" % (weather['city'].encode('utf-8'), weather['temp'], weather['cond'].encode('utf-8'))
 
 			if weather['windspeed'] is not None:
 				answer += ", wind speed: %.1f" % weather['windspeed']
