@@ -67,10 +67,10 @@ class WeatherModule(BotModule):
 
 			answer = "Wetter für %s: %.2f °C, %s" % (weather['city'].encode('utf-8'), weather['temp'], weather['cond'].encode('utf-8'))
 
-			if weather['windspeed'] is not None:
+			if 'windspeed' in weather:
 				answer += ", wind speed: %.1f" % weather['windspeed']
 
-			if weather['humidity'] is not None:
+			if 'humidity' in weather:
 				answer += ", humidity: %d" % weather['humidity']
 
 			if type == 'public':
