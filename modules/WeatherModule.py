@@ -104,7 +104,7 @@ class WeatherModule(BotModule):
 				self.sendPublicMessage(answer)
 
 				if weather['temp'] > 30:
-					self.sendPublicMessage('Willkommen in der der Karibik, *croak* Schätzchen!')
+					self.sendPublicMessage('Willkommen in der der Karibik, Schätzchen!')
 			else :
 				self.sendPrivateMessage(nick, answer)
 
