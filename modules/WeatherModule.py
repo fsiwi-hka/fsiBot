@@ -36,7 +36,7 @@ class WeatherModule(BotModule):
 
 			jsondata = json.loads(u.read())
 
-			if jsondata['cod'] != 200:
+			if jsondata['cod'] != '200':
 				if jsondata['message'] != '':
 					answer = jsondata['message'].encode('utf-8')
 					if type == 'public':
