@@ -14,7 +14,7 @@ class WeatherModule(BotModule):
 			if len(args) > 0:
 				postalcode = ' '.join(args)
 
-			if postalcode == 'Honoluluuu'
+			if postalcode == 'Honoluluuu':
 				self.sendPublicMessage('Computer sagt: NEIN!')
 				return
 
