@@ -53,10 +53,12 @@ class WeatherModule(BotModule):
 			city = jsondata['list'][0]['name']
 			temp = jsondata['list'][0]['main']['temp']
 			cond = jsondata['list'][0]['weather'][0]['description']
+			humidity = jsondata['list'][0]['main']['humidity']
+			windspeed = jsondata['list'][0]['wind']['speed']
 #			humi = root.find(".//humidity").attrib["data"].encode("utf-8")
 #			wind = root.find(".//wind_condition").attrib["data"].encode("utf-8")
 
-			answer = "Wetter für %s: %.2f °C, %s" % (city.encode('utf-8'), temp, cond.encode('utf-8'))
+			answer = "Wetter für %s: %.2f °C, %s, wind speed: %.1f, humidity: %d" % (city.encode('utf-8'), temp, cond.encode('utf-8'), windspeed, humidity)
 
 			if type == 'public':
 				self.sendPublicMessage(answer)
