@@ -10,18 +10,18 @@ class WeatherModule(BotModule):
 
 	def command(self, nick, cmd, args, type):
 		if cmd == "!wetter":
-			postalcode = "Karlsruhe"
+			postalcode = "karlsruhe"
 			if len(args) > 0:
-				postalcode = ' '.join(args)
+				postalcode = ' '.join(args).lower()
 
-			if postalcode.startswith('Honoluluu'):
+			if postalcode.startswith('honoluluu'):
 				answer = 'Computer sagt: NEIN!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
 				else :
 					self.sendPrivateMessage(nick, answer)
 				return
-			elif postalcode == 'Mele Island':
+			elif postalcode == 'mele island':
 				answer = 'Dublonen, Dublonen!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
