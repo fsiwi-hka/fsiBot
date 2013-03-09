@@ -15,7 +15,18 @@ class WeatherModule(BotModule):
 				postalcode = ' '.join(args)
 
 			if postalcode.startswith('Honoluluu'):
-				self.sendPublicMessage('Computer sagt: NEIN!')
+				answer = 'Computer sagt: NEIN!')
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				else :
+					self.sendPrivateMessage(nick, answer)
+				return
+			elif postalcode == 'Mele Island':
+				answer = 'Dublonen, Dublonen!'
+				if type == 'public':
+					self.sendPublicMessage(answer)
+				else :
+					self.sendPrivateMessage(nick, answer)
 				return
 
 			try:
@@ -51,7 +62,7 @@ class WeatherModule(BotModule):
 				return
 
 			if len(jsondata['list']) < 1:
-				answer = 'Keine passenden Daten gefunden!'
+				answer = 'Leck? welches Leck?'
 				if type == 'public':
 					self.sendPublicMessage(answer)
 				else :
@@ -59,7 +70,7 @@ class WeatherModule(BotModule):
 				return
 
 			elif len(jsondata['list']) > 1:
-				answer = 'Mehrere Datensätze gefunden, bitte Ortsangaben genauer spezifizieren!'
+				answer = 'Mr Cotton´s Papagei! Die selbe Frage!'
 				if type == 'public':
 					self.sendPublicMessage(answer)
 				else :
@@ -91,6 +102,9 @@ class WeatherModule(BotModule):
 
 			if type == 'public':
 				self.sendPublicMessage(answer)
+
+				if weather['temp'] > 30:
+					self.sendPublicMessage('Willkommen in der der Karibik, *croak* Schätzchen!')
 			else :
 				self.sendPrivateMessage(nick, answer)
 
