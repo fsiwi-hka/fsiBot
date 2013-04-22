@@ -141,6 +141,6 @@ class TwitterModule(BotModule):
 		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
 		self.sendPrivateMessage(nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
 		self.sendPrivateMessage(nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
-		self.sendPrivateMessage(nick, "!t[witter] list Zeigt die derzeit gefolten User an")
+		self.sendPrivateMessage(nick, "!t[witter] list Zeigt die derzeit gefollowten User an")
 		
 		return
