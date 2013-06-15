@@ -28,7 +28,7 @@ class TwitterModule(BotModule):
 		self.users = [TwitterUser('cyberchampionka')]
 		self.lastTick = time.time()
 		self.api = twitter.Api(consumer_key=modulecfg.consumer_key,
-								consumer_secret_token=modulecfg.consumer_secret_token,
+								consumer_secret=modulecfg.consumer_secret_token,
 								access_token_key=modulecfg.access_token_key,
 								access_token_secret=modulecfg.access_token_secret)
 		self.htmlparser = HTMLParser.HTMLParser()
