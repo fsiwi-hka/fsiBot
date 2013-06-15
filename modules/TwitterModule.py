@@ -21,7 +21,7 @@ class TwitterUser:
 class TwitterModule(BotModule):
 
 	def __init__(self):
-		cfg = config.Config(file("../bot.config"))
+		cfg = config.Config(file("bot.config"))
 		modulecfg = cfg.twitter
 
 		self.offset = 60 * 5
