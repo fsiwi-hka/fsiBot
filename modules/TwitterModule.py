@@ -93,6 +93,7 @@ class TwitterModule(BotModule):
 			self.lastTick = timestamp
 
 	def command(self, nick, cmd, args, type):
+		statuses = None
 		if cmd == '!t' or cmd == '!twitter':
 			if len(args) == 0:
 				answer = "Twitter module expects at least 1 parameter!"
