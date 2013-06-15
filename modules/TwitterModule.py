@@ -2,7 +2,7 @@
 # coding=utf8
 
 from BotModule import BotModule
-import twitter, time, HTMLParser
+import twitter, time, HTMLParser, config
 
 class TwitterUser:
 	def __init__(self, nick):
@@ -21,10 +21,16 @@ class TwitterUser:
 class TwitterModule(BotModule):
 
 	def __init__(self):
+		cfg = config.Config(file("../bot.config"))
+		modulecfg = cfg.twitter
+
 		self.offset = 60 * 5
 		self.users = [TwitterUser('cyberchampionka')]
 		self.lastTick = time.time()
-		self.api = twitter.Api()
+		self.api = twitter.Api(consumer_key=modulecfg.consumer_key,
+								consumer_secret_token=modulecfg.consumer_secret_token,
+								access_token_key=modulecfg.access_token_key,
+								access_token_secret=modulecfg.access_token_secret)
 		self.htmlparser = HTMLParser.HTMLParser()
 
 		return
