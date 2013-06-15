@@ -137,6 +137,8 @@ class TwitterModule(BotModule):
 						return
 				try:
 					statuses = self.api.GetUserTimeline(args[0])
+					if self.modcfg.DEBUG:
+						print statuses
 				except:
 					return
 				if statuses is not None and 0 <= number < len(statuses):
