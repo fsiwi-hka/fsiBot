@@ -22,15 +22,15 @@ class TwitterModule(BotModule):
 
 	def __init__(self):
 		cfg = config.Config(file("bot.config"))
-		modulecfg = cfg.twitter
+		self.modcfg = cfg.twitter
 
 		self.offset = 60 * 5
-		self.users = [TwitterUser('cyberchampionka')]
+		self.users = [TwitterUser(user) for user in self.modcfg.users]
 		self.lastTick = time.time()
-		self.api = twitter.Api(consumer_key=modulecfg.consumer_key,
-								consumer_secret=modulecfg.consumer_secret,
-								access_token_key=modulecfg.access_token_key,
-								access_token_secret=modulecfg.access_token_secret)
+		self.api = twitter.Api(consumer_key=self.modcfg.consumer_key,
+								consumer_secret=self.modcfg.consumer_secret,
+								access_token_key=self.modcfg.access_token_key,
+								access_token_secret=self.modcfg.access_token_secret)
 		self.htmlparser = HTMLParser.HTMLParser()
 
 		return
@@ -41,36 +41,36 @@ class TwitterModule(BotModule):
 
 		# max requests = 150!
 		if timestamp - self.lastTick > self.offset:
-			if self.DEBUG:
+			if self.modcfg.DEBUG:
 				print "Processing tick"
 			users_tmp = self.users
 			for user in users_tmp:
-				if self.DEBUG:
+				if self.modcfg.DEBUG:
 					print "Processing " + user.nick + "s tweets"
 				try:
 					statuses = self.api.GetUserTimeline(id = user.nick, since_id = user.lastId, include_rts = True)
 				except twitter.TwitterError, err:
 					if str(err).startswith('Rate limit exceeded.'):
-						if self.DEBUG:
+						if self.modcfg.DEBUG:
 							print '%s: Disabling for 60 Minutes' % str(err)
 						self.lastTick = timestamp + 60*60
 						return
 					elif str(err).startswith('Not authorized'):
-						if self.DEBUG:
+						if self.modcfg.DEBUG:
 							print 'Removing %s: %s' % (user.nick, str(err))
 						self.users.remove(user)
 					elif str(err).startswith('Not found'):
-						if self.DEBUG:
+						if self.modcfg.DEBUG:
 							print 'Removing %s: %s' % (user.nick, str(err))
 						self.users.remove(user)
 					else: 
-						if self.DEBUG:
+						if self.modcfg.DEBUG:
 							print 'Unknown Error! Removing %s: %s' % (user.nick, str(err))
 						self.users.remove(user)
 					continue
 
 				except Exception as e:
-					if self.DEBUG:
+					if self.modcfg.DEBUG:
 						print 'unhandled exception: %s' % str(e)
 					continue
 
@@ -78,7 +78,7 @@ class TwitterModule(BotModule):
 				tmp_id = 0
 				for status in reversed(statuses):
 					if status.created_at_in_seconds > user.lastUpdate:
-						if self.DEBUG:
+						if self.modcfg.DEBUG:
 							print "Sending to channel: [" + user.nick + "] " + status.text.replace('\n','').replace('\r','')
 						self.sendPublicMessage('[@' + self.htmlparser.unescape(user.nick).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
 						if tmp_created < status.created_at_in_seconds:
@@ -104,12 +104,12 @@ class TwitterModule(BotModule):
 				return
 
 			if len(args) > 1 and args[0] == 'add':
-				if self.DEBUG:
+				if self.modcfg.DEBUG:
 					print 'Adding ' + ', '.join(args[1:])
 				self.users.extend([TwitterUser(u) for u in args[1:]])
 
 			elif len(args) > 1 and args[0] == 'del':
-				if self.DEBUG:
+				if self.modcfg.DEBUG:
 					print 'Removing %s' % ', '.join(args[1:])
 				for u in args[1:]:
 					for user in self.users:
@@ -117,7 +117,7 @@ class TwitterModule(BotModule):
 							self.users.remove(user)
 
 			elif args[0] == 'list':
-				if self.DEBUG:
+				if self.modcfg.DEBUG:
 					print 'Printing userlist ' + ', '.join(user.nick for user in self.users)
 
 				answer = '[Twitter] ' + ', '.join(user.nick for user in self.users)
@@ -139,7 +139,7 @@ class TwitterModule(BotModule):
 				except:
 					return
 				if statuses is not None and 0 <= number < len(statuses):
-					if self.DEBUG:
+					if self.modcfg.DEBUG:
 						print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
 					self.sendPublicMessage('[@' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
 
