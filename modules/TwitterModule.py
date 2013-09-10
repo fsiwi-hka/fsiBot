@@ -90,7 +90,7 @@ class TwitterModule(BotModule):
 				self.answer(type, nick, "TwitterModule expects at least 1 parameter!")
 				return
 
-			if self.isOper(nick) and self.authorized is True and args[0] == 'add' and len(args) > 1:
+			if self.isOper(nick) and self.authorized and args[0] == 'add' and len(args) > 1:
 				if self.cfg.DEBUG:
 					print 'Adding ' + ', '.join(args[1:])
 
@@ -110,7 +110,7 @@ class TwitterModule(BotModule):
 				self.refreshFriendlist()
 				return
 
-			if self.isOper(nick) and self.authorized is True and args[0] == 'del' and len(args) > 1:
+			if self.isOper(nick) and self.authorized and args[0] == 'del' and len(args) > 1:
 				if self.cfg.DEBUG:
 					print 'Removing %s' % ', '.join(args[1:])
 
@@ -130,18 +130,22 @@ class TwitterModule(BotModule):
 				self.refreshFriendlist()
 				return
 
-			if self.isOper(nick) and self.authorized is True and args[0] == 'refresh':
+			if self.isOper(nick) and self.authorized and args[0] == 'refresh':
 				if self.cfg.DEBUG:
 					print 'Refreshing friendslist'
 
 				self.refreshFriendlist()
 				return
 
-			if self.authorized is True and args[0] == 'list':
+			if self.authorized and args[0] == 'list':
 				if self.cfg.DEBUG:
 					print 'Printing userlist ' + ', '.join(user.GetScreenName() for user in self.friends)
 
 				self.answer(type, nick, '[Twitter] ' + ', '.join(user.GetScreenName() for user in self.friends))
+				return
+
+			if args[0] == 'help':
+				self.help(nick)
 				return
 
 			if 1 <= len(args) < 3:
