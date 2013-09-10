@@ -2,7 +2,6 @@
 # coding=utf8
 
 # TODO:
-# Forenlinks nicht auflösen, da Threadtitel nicht gelesen werden können
 #
 
 from BotModule import BotModule
@@ -11,7 +10,7 @@ import urllib2, lxml.html, re, HTMLParser
 
 class LinkTitleModule(BotModule):
 	maxredirects 	= 10
-	shortenUrls 	= 1
+	shortenUrls 	= True
 	blacklist		= ['forum.hska.info']
 
 	def __init__(self):
