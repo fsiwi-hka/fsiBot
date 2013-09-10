@@ -165,13 +165,13 @@ class TwitterModule(BotModule):
 				return
 
 	def help(self, nick):
-		self.answer('private', nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
-		self.answer('private', nick, "!t[witter] list Zeigt die derzeit gefollowten User an")
+		self.answer('private', nick, "!t[witter] <nick>[ <i>] - Zeigt den <i>-t letzten Tweet von <nick>")
+		self.answer('private', nick, "!t[witter] list - Zeigt die derzeit gefollowten User an")
 
 		if self.isOper(nick):
-			self.answer('private', nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
-			self.answer('private', nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
-			self.answer('private', nick, "!t[witter] refresh Lädt die Friendlist neu")
+			self.answer('private', nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... - Fügt <nick> hinzu")
+			self.answer('private', nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... - Entfernt <nick>")
+			self.answer('private', nick, "!t[witter] refresh - Lädt die Friendlist neu")
 
 	def answer(self, type, nick, message):
 		if type == 'public':
