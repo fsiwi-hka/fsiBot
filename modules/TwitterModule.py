@@ -4,152 +4,181 @@
 from BotModule import BotModule
 import twitter, time, HTMLParser, config
 
-class TwitterUser:
-	def __init__(self, nick):
-		self.nick = nick
-		self.lastUpdate = time.time()
-		self.lastId = 0
-
-	def updateTimestamp(self, timestamp):
-		if timestamp > self.lastUpdate:
-			self.lastUpdate = timestamp
-
-	def updateId(self, lastId):
-		if id > self.lastId:
-			self.lastId = lastId
-
 class TwitterModule(BotModule):
 
 	def __init__(self):
-		cfg = config.Config(file("bot.config"))
-		self.modcfg = cfg.twitter
-
-		self.offset = 60 * 5
-		self.users = [TwitterUser(user) for user in self.modcfg.users]
-		self.lastTick = time.time()
-		self.api = twitter.Api(consumer_key=self.modcfg.consumer_key,
-								consumer_secret=self.modcfg.consumer_secret,
-								access_token_key=self.modcfg.access_token_key,
-								access_token_secret=self.modcfg.access_token_secret)
+		self.cfg = config.Config(file("bot.config")).twitter
 		self.htmlparser = HTMLParser.HTMLParser()
+		self.api = twitter.Api(consumer_key=self.cfg.consumer_key,
+								consumer_secret=self.cfg.consumer_secret,
+								access_token_key=self.cfg.access_token_key,
+								access_token_secret=self.cfg.access_token_secret)
+
+		self.authorized = False
+
+		if self.api.VerifyCredentials() is not None:
+			self.authorized = True
+			self.refreshFriendlist()
+			self.last_id = self.api.GetHomeTimeline()[0].id
+
+		self.last_tick = 0
 
 		return
 
 	def tick(self):
-		tmp = 0
-		timestamp = time.time()
+		cur_time = time.time()
 
-		# max requests = 150!
-		if timestamp - self.lastTick > self.offset:
-			if self.modcfg.DEBUG:
-				print "Processing tick"
-			users_tmp = self.users
-			for user in users_tmp:
-				if self.modcfg.DEBUG:
-					print "Processing " + user.nick + "s tweets"
-				try:
-					statuses = self.api.GetUserTimeline(id = user.nick, since_id = user.lastId, include_rts = True)
-				except twitter.TwitterError, err:
-					if str(err).startswith('Rate limit exceeded.'):
-						if self.modcfg.DEBUG:
-							print '%s: Disabling for 60 Minutes' % str(err)
-						self.lastTick = timestamp + 60*60
-						return
-					elif str(err).startswith('Not authorized'):
-						if self.modcfg.DEBUG:
-							print 'Removing %s: %s' % (user.nick, str(err))
-						self.users.remove(user)
-					elif str(err).startswith('Not found'):
-						if self.modcfg.DEBUG:
-							print 'Removing %s: %s' % (user.nick, str(err))
-						self.users.remove(user)
-					else: 
-						if self.modcfg.DEBUG:
-							print 'Unknown Error! Removing %s: %s' % (user.nick, str(err))
-						self.users.remove(user)
-					continue
+		offset = self.cfg.update_interval*60
 
-				except Exception as e:
-					if self.modcfg.DEBUG:
-						print 'unhandled exception: %s' % str(e)
-					continue
+		if cur_time - self.last_tick < offset:
+			return
 
-				tmp_created = 0
-				tmp_id = 0
-				for status in reversed(statuses):
-					if status.created_at_in_seconds > user.lastUpdate:
-						if self.modcfg.DEBUG:
-							print "Sending to channel: [" + user.nick + "] " + status.text.replace('\n','').replace('\r','')
-						self.sendPublicMessage('[@' + self.htmlparser.unescape(user.nick).encode('utf-8') + '] ' + self.htmlparser.unescape(status.text.replace('\n','').replace('\r','')).encode('utf-8'))
-						if tmp_created < status.created_at_in_seconds:
-							tmp_created = status.created_at_in_seconds
-						if tmp_id < status.id:
-							tmp_id = status.id
+		if self.cfg.DEBUG:
+			print "Processing tick"
 
-				user.updateTimestamp(tmp_created)
-				user.updateId(tmp_id)
+		if self.authorized is True:
+			try:
+				timeline = self.api.GetHomeTimeline(since_id=self.last_id, include_entities=False, exclude_replies=True)
+			except twitter.TwitterError as err:
+				if str(err).startswith("[{u'message': u'Rate limit exceeded"):
+					if self.cfg.DEBUG:
+						print '%s: Disabling for 5 Minutes' % str(err)
 
+					self.last_tick = cur_time + 60*5
+					return
+				else: 
+					if self.cfg.DEBUG:
+						print 'Unknown Error: %s' % str(err)
 
-			self.lastTick = timestamp
+					# for debuging ...
+					self.last_tick = cur_time + 60*15
+					return
+
+			except Exception as e:
+				if self.cfg.DEBUG:
+					print 'unhandled exception: %s' % str(e)
+				return			
+
+			if len(timeline) > 0:
+				for status in reversed(timeline):
+
+					if status.GetId() > self.last_id:
+						self.last_id = status.GetId()
+
+					if status.GetRetweeted_status() is not None:
+						if self.cfg.DEBUG:
+							print 'Replacing retweet with original tweet'
+						status = status.GetRetweeted_status()
+
+					if self.cfg.DEBUG:
+						print "Sending to channel: [" + status.GetUser().GetScreenName() + "] " + status.GetText().replace('\n','').replace('\r','')
+					self.answer('public', '', '[@' + self.htmlparser.unescape(status.GetUser().GetScreenName()).encode('utf-8') + '] ' + self.htmlparser.unescape(status.GetText().replace('\n','').replace('\r','')).encode('utf-8'))				
+
+		if self.cfg.DEBUG:
+			try:
+				api_limit_status = self.api.GetRateLimitStatus()
+				print "Remaining API requests: %d" % api_limit_status['resources']['application']['/application/rate_limit_status']['remaining']
+			except:
+				pass
+
+		self.last_tick = cur_time
+
 
 	def command(self, nick, cmd, args, type):
-		statuses = None
 		if cmd == '!t' or cmd == '!twitter':
 			if len(args) == 0:
-				answer = "Twitter module expects at least 1 parameter!"
+				self.answer(type, nick, "TwitterModule expects at least 1 parameter!")
 
-				if type == 'public':
-					self.sendPublicMessage(answer)
-				elif type == 'private':
-					self.sendPrivateMessage(nick, answer)
-				return
-
-			if len(args) > 1 and args[0] == 'add':
-				if self.modcfg.DEBUG:
+			if self.isOper(nick) and self.authorized is True and args[0] == 'add' and len(args) > 1:
+				if self.cfg.DEBUG:
 					print 'Adding ' + ', '.join(args[1:])
-				self.users.extend([TwitterUser(u) for u in args[1:]])
 
-			elif len(args) > 1 and args[0] == 'del':
-				if self.modcfg.DEBUG:
-					print 'Removing %s' % ', '.join(args[1:])
-				for u in args[1:]:
-					for user in self.users:
-						if user.nick == u:
-							self.users.remove(user)
-
-			elif args[0] == 'list':
-				if self.modcfg.DEBUG:
-					print 'Printing userlist ' + ', '.join(user.nick for user in self.users)
-
-				answer = '[Twitter] ' + ', '.join(user.nick for user in self.users)
-
-				if type == 'public':
-					self.sendPublicMessage(answer)
-				elif type == 'private':
-					self.sendPrivateMessage(nick, answer)
-
-			elif type == 'public' and 0 < len(args) < 3:
-				number = 0
-				if len(args) > 1:
+				for nick in args[1:]:
 					try:
-						number = int(args[1],0)
+						res = self.api.CreateFriendship(screen_name=nick)
 					except:
 						return
+
+					if res is not None:
+						if self.cfg.DEBUG:
+							print 'Added %s' % nick
+					else:
+						if self.cfg.DEBUG:
+							print 'Failure adding %s' % nick
+
+				self.refreshFriendlist()
+				return
+
+			if self.isOper(nick) and self.authorized is True and args[0] == 'del' and len(args) > 1:
+				if self.cfg.DEBUG:
+					print 'Removing %s' % ', '.join(args[1:])
+
+				for nick in args[1:]:
+					try:
+						res = self.api.DestroyFriendship(screen_name=nick)
+					except:
+						return
+
+					if res is not None:
+						if self.cfg.DEBUG:
+							print 'Removed %s' % nick
+					else:
+						if self.cfg.DEBUG:
+							print 'Failure removing %s' % nick									
+
+				self.refreshFriendlist()
+				return
+
+			if self.isOper(nick) and self.authorized is True and args[0] == 'refresh':
+				if self.cfg.DEBUG:
+					print 'Refreshing friendslist'
+
+				self.refreshFriendlist()
+				return
+
+			if self.authorized is True and args[0] == 'list':
+				if self.cfg.DEBUG:
+					print 'Printing userlist ' + ', '.join(user.GetScreenName() for user in self.friends)
+
+				self.answer(type, nick, '[Twitter] ' + ', '.join(user.GetScreenName() for user in self.friends))
+				return
+
+			if 1 <= len(args) < 3:
+				index = 0
+				if len(args) > 1:
+					try:
+						index = int(args[1],0)
+					except:
+						return
+
 				try:
-					statuses = self.api.GetUserTimeline(args[0])
-					if self.modcfg.DEBUG:
-						print statuses
+					user_timeline = self.api.GetUserTimeline(screen_name=args[0])
 				except:
 					return
-				if statuses is not None and 0 <= number < len(statuses):
-					if self.modcfg.DEBUG:
-						print "Sending to channel: [" + args[0] + "] " + statuses[0].text.replace('\n','').replace('\r','')
-					self.sendPublicMessage('[@' + args[0] + '] ' + self.htmlparser.unescape(statuses[number].text.replace('\n','').replace('\r','')).encode('utf-8'))
+
+				if user_timeline is not None and 0 <= index < len(user_timeline):
+					if self.cfg.DEBUG:
+						print "User Tweet: [" + args[0] + "] " + user_timeline[index].GetText().replace('\n','').replace('\r','')
+					self.answer(type, nick, '[@' + args[0] + '] ' + self.htmlparser.unescape(user_timeline[index].GetText().replace('\n','').replace('\r','')).encode('utf-8'))					
+
+				return
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
-		self.sendPrivateMessage(nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
-		self.sendPrivateMessage(nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
-		self.sendPrivateMessage(nick, "!t[witter] list Zeigt die derzeit gefollowten User an")
-		
-		return
+		self.answer('private', nick, "!t[witter] <nick>[ <i>] Zeigt den <i>-t letzten Tweet von <nick>")
+		self.answer('private', nick, "!t[witter] list Zeigt die derzeit gefollowten User an")
+
+		if self.isOper(nick):
+			self.answer('private', nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... Fügt <nick> hinzu")
+			self.answer('private', nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... Entfernt <nick>")
+			self.answer('private', nick, "!t[witter] refresh Lädt die Friendlist neu")
+
+	def answer(self, type, nick, message):
+		if type == 'public':
+			self.sendPublicMessage(message)
+		elif type == 'private':
+			self.sendPrivateMessage(nick, message)
+		elif self.cfg.DEBUG:
+			print "Unknown message type: %s" % type
+
+	def refreshFriendlist(self):
+		self.friends = self.api.GetFriends()
