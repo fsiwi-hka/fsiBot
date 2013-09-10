@@ -88,6 +88,7 @@ class TwitterModule(BotModule):
 		if cmd == '!t' or cmd == '!twitter':
 			if len(args) == 0:
 				self.answer(type, nick, "TwitterModule expects at least 1 parameter!")
+				return
 
 			if self.isOper(nick) and self.authorized is True and args[0] == 'add' and len(args) > 1:
 				if self.cfg.DEBUG:
