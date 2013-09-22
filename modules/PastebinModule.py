@@ -14,7 +14,7 @@ class PastebinModule(BotModule):
 	def command(self, nick, cmd, args, type):
 		if cmd == "!paste" or cmd == "!p" :
 			if len(args) == 0:
-				output = "http://strg-c-v.hska.info"
+				output = "https://strg-c-v.hska.info"
 			else:
 				#output = commands.getoutput("fortune -s").replace("\n", " ").replace("\t", " ")
 				conn = MySQLdb.connect(	host = "localhost",
@@ -26,7 +26,7 @@ class PastebinModule(BotModule):
 				cursor.execute('SELECT pid FROM pastes WHERE name = %s ORDER BY created DESC LIMIT 1', (foo))
 				row = cursor.fetchone()
 				if row is not None:
-					output = "http://strg-c-v.hska.info/view/" + row[0]
+					output = "https://strg-c-v.hska.info/view/" + row[0]
 				else:
 					output = "Kein Paste von " + foo + " gefunden."
 				cursor.close()
