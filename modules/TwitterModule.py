@@ -19,7 +19,8 @@ class TwitterModule(BotModule):
 		if self.api.VerifyCredentials() is not None:
 			self.authorized = True
 			self.refreshFriendlist()
-			self.last_id = self.api.GetHomeTimeline()[0].id
+			self.first_tick = True
+			self.last_id = 0;
 
 		self.last_tick = 0
 
@@ -42,9 +43,9 @@ class TwitterModule(BotModule):
 			except twitter.TwitterError as err:
 				if str(err).startswith("[{u'message': u'Rate limit exceeded"):
 					if self.cfg.DEBUG:
-						print '%s: Disabling for 5 Minutes' % str(err)
+						print '%s: Skipping this tick' % str(err)
 
-					self.last_tick = cur_time + 60*5
+					self.last_tick = cur_time
 					return
 				else: 
 					if self.cfg.DEBUG:
@@ -58,6 +59,12 @@ class TwitterModule(BotModule):
 				if self.cfg.DEBUG:
 					print 'unhandled exception: %s' % str(e)
 				return			
+
+			if self.first_tick:
+				if len(timeline) > 0:
+					self.last_id = timeline[0].id
+					self.first_tick = False
+				return
 
 			if len(timeline) > 0:
 				for status in reversed(timeline):
@@ -77,8 +84,8 @@ class TwitterModule(BotModule):
 		if self.cfg.DEBUG:
 			try:
 				api_limit_status = self.api.GetRateLimitStatus()
-				print "Remaining API requests: %d" % api_limit_status['resources']['application']['/application/rate_limit_status']['remaining']
-			except:
+				print "Remaining API requests: %d" % api_limit_status['resources']['statuses']['/statuses/home_timeline']['remaining']
+			except Exception as e:
 				pass
 
 		self.last_tick = cur_time
@@ -137,6 +144,21 @@ class TwitterModule(BotModule):
 				self.refreshFriendlist()
 				return
 
+			if self.isOper(nick) and self.authorized and args[0] == 'post':
+				tweet = ' '.join(args[1:])
+				if self.cfg.DEBUG:
+					print 'Posting status update: %s' % tweet
+
+				if len(tweet) > 140:
+					if self.cfg.DEBUG:
+						print 'Text is to long!'
+
+					self.answer(type, nick, 'Nachricht darf höchstens 140 Zeichen enthalen, hat aber %d Zeichen!' % len(tweet))
+					return
+
+				self.api.PostUpdate(tweet)
+				return
+
 			if self.authorized and args[0] == 'list':
 				if self.cfg.DEBUG:
 					print 'Printing userlist ' + ', '.join(user.GetScreenName() for user in self.friends)
@@ -176,6 +198,7 @@ class TwitterModule(BotModule):
 			self.answer('private', nick, "!t[witter] add <nick>[ <nick2>][ <nick3>]... - Fügt <nick> hinzu")
 			self.answer('private', nick, "!t[witter] del <nick>[ <nick2>][ <nick3>]... - Entfernt <nick>")
 			self.answer('private', nick, "!t[witter] refresh - Lädt die Friendlist neu")
+			self.answer('private', nick, "!t[witter] post <Text> - Postet ein Update mit <Text>")
 
 	def answer(self, type, nick, message):
 		if type == 'public':
