@@ -8,7 +8,7 @@ class BullshitModule(BotModule):
 		pass
 
 	def command(self, nick, cmd, args, type):
-		if cmd == "!bs" or cmd == "!klaus":
+		if type == "public" and (cmd == "!bs" or cmd == "!klaus"):
 			ht = urllib2.urlopen("http://bullshit.aiju.de")
 			for i in range(0, 6):
 				ht.readline()
