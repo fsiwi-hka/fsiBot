@@ -70,16 +70,20 @@ class TwitterModule(BotModule):
 				for status in reversed(timeline):
 
 					if status.GetId() > self.last_id:
-						self.last_id = status.GetId()
+					    self.last_id = status.GetId()
 
-					if status.GetRetweeted_status() is not None:
+					for phrase in self.cfg.ignore_phrases:
+						if phrase in status.GetText():
+							break;
+					else:
+						if status.GetRetweeted_status() is not None:
+							if self.cfg.DEBUG:
+								print 'Replacing retweet with original tweet'
+							status = status.GetRetweeted_status()
+						
 						if self.cfg.DEBUG:
-							print 'Replacing retweet with original tweet'
-						status = status.GetRetweeted_status()
-
-					if self.cfg.DEBUG:
-						print "Sending to channel: [" + status.GetUser().GetScreenName() + "] " + status.GetText().replace('\n','').replace('\r','')
-					self.answer('public', '', '[@' + self.htmlparser.unescape(status.GetUser().GetScreenName()).encode('utf-8') + '] ' + self.htmlparser.unescape(status.GetText().replace('\n','').replace('\r','')).encode('utf-8'))				
+							print "Sending to channel: [" + status.GetUser().GetScreenName() + "] " + status.GetText().replace('\n','').replace('\r','')
+						self.answer('public', '', '[@' + self.htmlparser.unescape(status.GetUser().GetScreenName()).encode('utf-8') + '] ' + self.htmlparser.unescape(status.GetText().replace('\n','').replace('\r','')).encode('utf-8'))				
 
 		if self.cfg.DEBUG:
 			try:
