@@ -32,7 +32,7 @@ class BestOfModule(BotModule):
 					author = line[5:].replace(" ====", "").replace("\n", "")
 				if line.startswith("  *"):
 					if len(args) == 0 or isOccuring(line, args, True) or isOccuring(author, args, True):
-						bo.append('"' + line[4:].replace("\n", "") + '" -- ' + author + ', via https://hska.info/bestof')
+						bo.append('"' + line[4:].replace("\n", "") + '" -- ' + author + ', via https://www.hska.info/bestof')
 			line = ""	
 			if len(bo) == 0:
 				line = "Kein passendes Best-Of gefunden."
@@ -45,5 +45,5 @@ class BestOfModule(BotModule):
 				self.sendPublicMessage(line)
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!bestof/!bo [Stichwort] - Zeigt eines der Best-Of Kommentare eines Profs an (https://hska.info/bestof).")
+		self.sendPrivateMessage(nick, "!bestof/!bo [Stichwort] - Zeigt eines der Best-Of Kommentare eines Profs an (https://www.hska.info/bestof).")
 		return
