@@ -29,7 +29,7 @@ class DeiMuddaModule(BotModule):
 			for line in bofile:
 				if line.startswith("  *"):
 					if len(args) == 0 or isOccuring(line, args, True):
-						bo.append('"' + line[4:].replace("\n", "") + '" via http://hska.info/deimudda')
+						bo.append('"' + line[4:].replace("\n", "") + '" via https://hska.info/deimudda')
 			line = ""	
 			if len(bo) == 0:
 				line = "Dei Mudda nicht gefunden."
@@ -42,5 +42,5 @@ class DeiMuddaModule(BotModule):
 				self.sendPublicMessage(line)
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!deimudda/!dm [stichwort] - Dei Mudda, Junge. (http://hska.info/deimudda).")
+		self.sendPrivateMessage(nick, "!deimudda/!dm [stichwort] - Dei Mudda, Junge. (https://hska.info/deimudda).")
 		return

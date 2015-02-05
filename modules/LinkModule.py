@@ -43,5 +43,5 @@ class LinkModule(BotModule):
 					self.sendPublicMessage("Kein Ergebnis für " + args[0])
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, "!link/!l [link label/Suchbegriff] - Gibt eine bestimmte URL aus. (http://hska.info/links).")
+		self.sendPrivateMessage(nick, "!link/!l [link label/Suchbegriff] - Gibt eine bestimmte URL aus. (https://hska.info/links).")
 		return

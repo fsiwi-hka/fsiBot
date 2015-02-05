@@ -34,7 +34,7 @@ class LinkTitleModule(BotModule):
 						headers = {
 							'Accept': 'text/html',
 							'User-Agent': 'Mozilla/5.0 (fsiBot)',
-							'Referrer': 'http://www.hska.info'
+							'Referrer': 'https://www.hska.info'
 							}
 						req = urllib2.Request(uri, headers = headers)
 						u = urllib2.urlopen(req, timeout=10)
