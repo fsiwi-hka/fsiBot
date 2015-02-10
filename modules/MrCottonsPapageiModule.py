@@ -26,7 +26,7 @@ class MrCottonsPapageiModule(BotModule):
 			self.sendPublicMessage('Frag einfach! Die Antwort kann halt etwas dauern ...')
 
 		if re.search(r'was[^\.\:\?\!]+sinn[^\.\:\?\!]+leben', args, re.IGNORECASE):
-			self.sendPublicMessage('*')
+			self.sendPublicMessage(chr(int((math.pi * 1337) / 100)))
 
 		probl = re.search(r'(have|has|hab|hät)[^\.\:\?\!]+(prob\w+)', args, re.IGNORECASE)
 		if probl:
