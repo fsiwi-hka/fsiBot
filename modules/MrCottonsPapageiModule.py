@@ -22,6 +22,9 @@ class MrCottonsPapageiModule(BotModule):
 		if re.search(r'kennt[^\.\:\?\!]+mit', args, re.IGNORECASE):
 			self.sendPublicMessage('Frag doch konkret!')
 
+		if re.search(r'jemand[^\.\:\?\!]+da', args, re.IGNORECASE):
+			self.sendPublicMessage('Frag einfach!')
+
 		probl = re.search(r'(have|has|hab|hät)[^\.\:\?\!]+(prob\w+)', args, re.IGNORECASE)
 		if probl:
 			# TODO
