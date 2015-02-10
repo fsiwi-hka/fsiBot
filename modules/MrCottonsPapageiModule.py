@@ -9,6 +9,9 @@ class MrCottonsPapageiModule(BotModule):
 	def __init__(self):
 		return
 
+	def command(self, nick, cmd, args, type):
+		return
+
 	def onMessage(self, type, args):
 		if type is not 'public':
 			return
