@@ -9,37 +9,26 @@ class MrCottonsPapageiModule(BotModule):
 	def __init__(self):
 		return
 
-	def command(self, nick, cmd, args, type):
+	def onMessage(self, type, args):
 		if type is not 'public':
 			return
 
-		if re.search(r'kann|dar|hab|hät)[^\.\:\?\!]+frage', cmd, re.IGNORECASE):
+		if re.search(r'(kann|darf|hab|hät)[^\.\:\?\!]+frage', args, re.IGNORECASE):
 			self.sendPublicMessage('Frag doch einfach!')
 
-		if re.search(r'(kann|brauch|bräucht|könnt|bitte)[^\.\:\?\!]+(helf|hilf)', cmd, re.IGNORECASE):
+		if re.search(r'(kann|brauch|bräucht|könnt|bitte)[^\.\:\?\!]+(helf|hilf)', args, re.IGNORECASE):
 			self.sendPublicMessage('Wobei?')
 
+		if re.search(r'kennt[^\.\:\?\!]+mit', args, re.IGNORECASE):
+			self.sendPublicMessage('Frag doch konkret!')
 
-
-#		if cmd == '!roulette' and type == 'public':
-#			# Reload revolver if ppl havent played in a while
-#			if len(self.revolver) != self.size and time.time() > self.lastShot + 60*60*2:
-#				self.revolver = self.reload()
-#				self.sendPublicMessage('Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.')
-#
-#			if self.revolver.pop() == 'bullet':
-#				line = 'Bang!! ' + nick + ' geht von uns wie ein echter Mann...'
-#				self.sendPublicMessage(line)
-#				self.kick(nick, line)
-#				self.revolver = self.reload()
-#				self.sendPublicMessage('Neues Glück: Trommel aus ' + str(self.size) + ' Männer-Bonbon-Fächern... Ein Bonbon ist drin und tödlich.')
-#
-#			else:
-#				self.sendPublicMessage('*click* - ' + nick + ' ist ein Glückspilz. Nächster?')
-#			self.lastShot = time.time()
-
+		probl = re.search(r'(have|has|hab|hät)[^\.\:\?\!]+(prob\w+)', args, re.IGNORECASE)
+		if probl:
+			# TODO
+			#ans = probl.group(0)
+			#es = probl.group(1)
+			self.sendPublicMessage('Wasn fürn Problem?')
 		return
 
 	def help(self, nick):
-		self.sendPrivateMessage(nick, '!roulette - Russisch Roulette - zeig was in dir steckt!')
 		return
