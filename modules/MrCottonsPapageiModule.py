@@ -10,11 +10,14 @@ class MrCottonsPapageiModule(BotModule):
 		return
 
 	def command(self, nick, cmd, args, type):
-		if type not 'public':
+		if type is not 'public':
 			return
 
-		if re.match(r'(?i)kann|dar|hab|hät)[^\.\:\?\!]+frage', cmd):
+		if re.search(r'kann|dar|hab|hät)[^\.\:\?\!]+frage', cmd, re.IGNORECASE):
 			self.sendPublicMessage('Frag doch einfach!')
+
+		if re.search(r'(kann|brauch|bräucht|könnt|bitte)[^\.\:\?\!]+(helf|hilf)', cmd, re.IGNORECASE):
+			self.sendPublicMessage('Wobei?')
 
 
 
