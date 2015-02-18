@@ -3,7 +3,8 @@
 
 from BotModule import BotModule
 
-import os, sys, random, time, re
+import re
+import math
 
 class MrCottonsPapageiModule(BotModule):
 	def __init__(self):
@@ -16,22 +17,22 @@ class MrCottonsPapageiModule(BotModule):
 		if type is not 'public':
 			return
 
-		if re.search(r'(kann|darf|hab|hät)[^\.\:\?\!]+frage', args, re.IGNORECASE):
+		if re.search(r'^(kann|darf|hab|hät)[^\.\:\?\!]+frage', args, re.IGNORECASE):
 			self.sendPublicMessage('Frag doch einfach!')
 
-		if re.search(r'(kann|brauch|bräucht|könnt|bitte)[^\.\:\?\!]+(helf|hilf)', args, re.IGNORECASE):
+		if re.search(r'^(kann|brauch|bräucht|könnt|bitte)[^\.\:\?\!]+(helf|hilf)', args, re.IGNORECASE):
 			self.sendPublicMessage('Wobei?')
 
-		if re.search(r'kennt[^\.\:\?\!]+mit', args, re.IGNORECASE):
+		if re.search(r'^kennt[^\.\:\?\!]+mit', args, re.IGNORECASE):
 			self.sendPublicMessage('Frag doch konkret!')
 
-		if re.search(r'jemand[^\.\:\?\!]+(da|hier)', args, re.IGNORECASE):
+		if re.search(r'^(ist\s)?jemand[^\.\:\?\!]+(da|hier)', args, re.IGNORECASE):
 			self.sendPublicMessage('Frag einfach! Die Antwort kann halt etwas dauern ...')
 
-		if re.search(r'was[^\.\:\?\!]+sinn[^\.\:\?\!]+leben', args, re.IGNORECASE):
+		if re.search(r'^was[^\.\:\?\!]+sinn[^\.\:\?\!]+leben', args, re.IGNORECASE):
 			self.sendPublicMessage(chr(int((math.pi * 1337) / 100)))
 
-		probl = re.search(r'(have|has|hab|hät)[^\.\:\?\!]+(prob\w+)', args, re.IGNORECASE)
+		probl = re.search(r'^((i|ich)\s)?(have|has|hab|hät)[^\.\:\?\!]+(prob\w+)', args, re.IGNORECASE)
 		if probl:
 			# TODO
 			#ans = probl.group(0)
